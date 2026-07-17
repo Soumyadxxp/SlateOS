@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slate OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* =========================================================
+           SLATE OS — design system
+           ========================================================= */
+        :root {
+            --void: #0a0b0f;
+            --void-2: #0e1015;
+            --panel: #14161d;
+            --panel-2: #1a1d26;
+            --panel-3: #20232e;
+            --line: rgba(233, 231, 226, 0.08);
+            --line-strong: rgba(233, 231, 226, 0.16);
+            --ink: #eae7e0;
+            --ink-dim: #9b9ca6;
+            --ink-faint: #5c5e6a;
+            --brass: #cf9a5c;
+            --brass-bright: #e3b579;
+            --brass-dim: rgba(207, 154, 92, 0.18);
+            --cyan: #5fd0c9;
+            --cyan-dim: rgba(95, 208, 201, 0.16);
+            --danger: #d9636b;
+            --danger-dim: rgba(217, 99, 107, 0.18);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --font-disp: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+            --font-body: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+            --shadow-lift: 0 20px 60px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            font-size: 19.5px;
+        }
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: radial-gradient(1200px 700px at 18% -8%, rgba(207, 154, 92, 0.05), transparent 60%),
+                radial-gradient(1000px 700px at 100% 100%, rgba(95, 208, 201, 0.045), transparent 55%),
+                var(--void);
+            font-family: var(--font-body);
+            color: var(--ink);
+        }
+
+        #bezel {
+            position: fixed;
+            inset: 0;
+            padding: 22px;
+            background: linear-gradient(155deg, #1b1d24 0%, #101116 45%, #0a0b0f 100%);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+        }
+        #bezel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(207, 154, 92, 0.10), transparent 30%);
+            opacity: .5;
+            mix-blend-mode: screen;
+        }
+        #screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--void-2);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), var(--shadow-lift);
+            overflow: hidden;
+        }
+
+        #boot-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--void-2);
+            color: var(--brass-bright);
+            padding: 44px 56px;
+            font-family: var(--font-disp);
+            font-size: 1.22rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            z-index: 500;
+            overflow-y: auto;
+        }
+        #boot-screen .ok {
+            color: var(--cyan);
+        }
+        #boot-screen .dim {
+            color: var(--ink-faint);
+        }
+        .boot-flicker {
+            animation: flicker .12s ease-out;
+        }
+        @keyframes flicker {
+            0% {
+                opacity: .4;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #desktop {
+            position: absolute;
+            inset: 0;
+            display: none;
+            z-index: 10;
+        }
+        #wallpaper {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(900px 500px at 15% 10%, rgba(207, 154, 92, 0.07), transparent 60%),
+                radial-gradient(700px 500px at 90% 90%, rgba(95, 208, 201, 0.06), transparent 55%),
+                linear-gradient(160deg, #12141b 0%, #0c0d12 100%);
+        }
+
+        #topbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: rgba(20, 22, 29, 0.86);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            z-index: 200;
+            font-family: var(--font-disp);
+            font-size: 0.98rem;
+            letter-spacing: .02em;
+        }
+        .tb-left,
+        .tb-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #topbar button.tb-btn {
+            background: none;
+            border: none;
+            color: var(--ink-dim);
+            font-family: var(--font-body);
+            font-size: 1.02rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: background .15s, color .15s;
+        }
+        #topbar button.tb-btn:hover {
+            background: var(--panel-2);
+            color: var(--ink);
+        }
+        .tb-icon {
+            background: none;
+            border: none;
+            color: var(--ink-dim);
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            transition: background .15s, color .15s;
+        }
+        .tb-icon:hover {
+            background: var(--panel-2);
+            color: var(--ink);
+        }
+        #topbar-clock {
+            color: var(--ink);
+            font-weight: 500;
+            letter-spacing: .03em;
+            font-size: 0.98rem;
+        }
+        .brand-chip {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            background: linear-gradient(155deg, var(--brass-bright), var(--brass) 60%, #8a6438);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-disp);
+            font-weight: 700;
+            font-size: 12px;
+            color: #171008;
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+        .brand-name {
+            color: var(--ink-dim);
+            font-weight: 600;
+            font-family: var(--font-body);
+            font-size: 0.98rem;
+        }
+
+        #power-menu {
+            position: absolute;
+            top: 44px;
+            right: 8px;
+            background: var(--panel);
+            border: 1px solid var(--line-strong);
+            border-radius: var(--radius);
+            padding: 6px;
+            display: none;
+            z-index: 300;
+            min-width: 180px;
+            box-shadow: var(--shadow-lift);
+        }
+        #power-menu button {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            text-align: left;
+            padding: 10px 14px;
+            background: none;
+            border: none;
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 1.03rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+        }
+        #power-menu button:hover {
+            background: var(--panel-2);
+        }
+        #power-menu button.danger:hover {
+            background: var(--danger-dim);
+            color: #ffb0b4;
+        }
+
+        #activities-overview {
+            position: absolute;
+            inset: 48px 0 0 0;
+            display: none;
+            z-index: 150;
+            background: rgba(10, 11, 15, 0.78);
+            backdrop-filter: blur(14px);
+            padding: 72px 40px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        #activities-overview .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 26px;
+            justify-content: center;
+            max-width: 960px;
+        }
+        .app-tile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 16px 10px;
+            border-radius: 14px;
+            background: transparent;
+            border: 1px solid transparent;
+            transition: all .15s;
+            color: var(--ink);
+        }
+        .app-grid .app-tile:hover {
+            background: var(--panel-2);
+            border-color: var(--line-strong);
+            transform: translateY(-2px);
+        }
+        .app-tile span {
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: var(--ink-dim);
+            letter-spacing: .01em;
+            text-align: center;
+            word-break: break-word;
+            max-width: 100%;
+        }
+        .chip-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, var(--panel-3), var(--panel-2));
+            border: 1px solid var(--line-strong);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 6px 16px rgba(0, 0, 0, 0.35);
+        }
+        .chip-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        #desktop-icons {
+            position: absolute;
+            top: 68px;
+            left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .dicon {
+            width: 98px;
+            text-align: center;
+            cursor: pointer;
+            padding: 12px 6px;
+            border-radius: 12px;
+            transition: background .15s;
+        }
+        .dicon:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .dicon .chip-icon {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 6px;
+        }
+        .dicon .chip-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        .dicon span {
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: #d8d6ce;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        #dock {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            background: rgba(20, 22, 29, 0.86);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--line-strong);
+            padding: 10px 12px;
+            border-radius: 20px;
+            z-index: 200;
+            box-shadow: var(--shadow-lift);
+        }
+        .dock .app-tile {
+            position: relative;
+            padding: 6px 4px;
+            flex-direction: column;
+            gap: 0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background .15s;
+        }
+        .dock .app-tile:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .dock .app-tile .chip-icon {
+            width: 48px;
+            height: 48px;
+        }
+        .dock .app-tile .chip-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+        .dock .app-tile:hover .chip-icon {
+            transform: translateY(-3px);
+        }
+        .dock .chip-icon {
+            transition: transform .15s;
+        }
+        .dock .running-dot {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--brass-bright);
+            display: none;
+        }
+        .dock .app-tile.running .running-dot {
+            display: block;
+        }
+        .dock-divider {
+            width: 1px;
+            align-self: stretch;
+            background: var(--line-strong);
+            margin: 4px 3px;
+        }
+
+        .win {
+            position: absolute;
+            min-width: 360px;
+            min-height: 240px;
+            background: var(--panel);
+            border: 1px solid var(--line-strong);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lift);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: var(--ink);
+        }
+        .win.focused {
+            border-color: rgba(207, 154, 92, 0.4);
+            box-shadow: var(--shadow-lift), 0 0 0 1px rgba(207, 154, 92, 0.25);
+        }
+        .win-titlebar {
+            height: 46px;
+            background: var(--panel-2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            cursor: grab;
+            user-select: none;
+            border-bottom: 1px solid var(--line);
+            flex-shrink: 0;
+        }
+        .win-titlebar:active {
+            cursor: grabbing;
+        }
+        .win-controls {
+            display: flex;
+            gap: 6px;
+            order: 1;
+            align-items: center;
+        }
+        .win-controls button {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.6);
+            transition: all .15s;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .win-controls button:hover {
+            transform: scale(1.1);
+        }
+        .win-controls button[data-act="close"] {
+            background: var(--danger);
+            color: #fff;
+        }
+        .win-controls button[data-act="close"]:hover {
+            background: #ff7a82;
+        }
+        .win-controls button[data-act="min"] {
+            background: var(--brass);
+            color: #1a1d26;
+        }
+        .win-controls button[data-act="min"]:hover {
+            background: var(--brass-bright);
+        }
+        .win-controls button[data-act="max"] {
+            background: var(--cyan);
+            color: #1a1d26;
+        }
+        .win-controls button[data-act="max"]:hover {
+            background: #7fe0d8;
+        }
+        .win-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--ink-dim);
+            order: 2;
+            margin-left: 8px;
+        }
+        .win.focused .win-title {
+            color: var(--ink);
+        }
+        .win-title svg {
+            width: 16px;
+            height: 16px;
+            opacity: .8;
+        }
+        .win-body {
+            flex: 1;
+            overflow: auto;
+            position: relative;
+            background: var(--void-2);
+        }
+        .resize-handle {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 18px;
+            height: 18px;
+            cursor: nwse-resize;
+        }
+        .resize-handle::after {
+            content: "";
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid var(--line-strong);
+            border-bottom: 2px solid var(--line-strong);
+        }
+
+        .mono-out {
+            font-family: var(--font-disp);
+            font-size: 1.15rem;
+            padding: 18px;
+            height: 100%;
+            overflow-y: auto;
+            background: var(--void-2);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.7;
+            color: var(--ink);
+        }
+        .term-line {
+            margin: 0 0 1px;
+        }
+        .term-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 1px;
+        }
+        .term-input-row .prompt {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        .p-user {
+            color: var(--cyan);
+        }
+        .p-at {
+            color: var(--ink-faint);
+        }
+        .p-host {
+            color: var(--cyan);
+        }
+        .p-colon {
+            color: var(--ink-faint);
+        }
+        .p-path {
+            color: var(--brass-bright);
+        }
+        .p-dollar {
+            color: var(--ink-dim);
+            margin-right: 2px;
+        }
+        .term-input-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--ink);
+            font-family: var(--font-disp);
+            font-size: 1.15rem;
+            outline: none;
+            padding: 2px 0;
+        }
+        .term-input-row input:disabled {
+            opacity: .4;
+        }
+        .out-err {
+            color: var(--danger);
+        }
+        .out-ok {
+            color: var(--cyan);
+        }
+        .name-dir {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .name-file {
+            color: var(--ink);
+        }
+        .name-hidden {
+            color: var(--ink-faint);
+        }
+        .grep-hit {
+            background: var(--brass-dim);
+            color: var(--brass-bright);
+            border-radius: 2px;
+        }
+
+        .files-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.98rem;
+            flex-shrink: 0;
+            background: var(--panel);
+            font-family: var(--font-disp);
+        }
+        .files-toolbar button {
+            background: var(--panel-3);
+            border: 1px solid var(--line-strong);
+            color: var(--ink);
+            padding: 6px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.96rem;
+            font-weight: 600;
+            transition: all .15s;
+        }
+        .files-toolbar button:hover {
+            background: var(--panel-2);
+            border-color: var(--brass-dim);
+        }
+        .files-toolbar .fpath {
+            color: var(--brass-bright);
+        }
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px 24px;
+            padding: 20px 24px;
+            overflow-y: auto;
+            flex: 1;
+            align-content: start;
+        }
+        .f-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 14px 8px;
+            border-radius: 12px;
+            transition: background .15s, transform .1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .f-item:hover {
+            background: var(--panel-2);
+            transform: translateY(-2px);
+        }
+        .f-item .chip-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto;
+            border-radius: 12px;
+        }
+        .f-item .chip-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        .f-name {
+            font-size: 0.92rem;
+            word-break: break-word;
+            color: var(--ink-dim);
+            font-weight: 500;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            line-height: 1.3;
+        }
+        .f-empty {
+            padding: 40px;
+            color: var(--ink-faint);
+            font-family: var(--font-disp);
+            font-size: 0.98rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--line);
+            background: var(--panel);
+            font-family: var(--font-disp);
+            font-size: 0.96rem;
+            flex-shrink: 0;
+        }
+        .editor-toolbar input {
+            flex: 1;
+            background: var(--void-2);
+            border: 1px solid var(--line-strong);
+            border-radius: 6px;
+            color: var(--ink);
+            padding: 6px 10px;
+            font-family: var(--font-disp);
+            font-size: 0.96rem;
+            outline: none;
+        }
+        .editor-toolbar button {
+            background: var(--brass-dim);
+            border: 1px solid var(--brass);
+            color: var(--brass-bright);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 0.94rem;
+            transition: all .15s;
+        }
+        .editor-toolbar button:hover {
+            background: rgba(207, 154, 92, 0.28);
+        }
+        .editor-status {
+            color: var(--ink-faint);
+            font-size: 0.86rem;
+        }
+        textarea.editor {
+            width: 100%;
+            height: calc(100% - 46px);
+            background: var(--void-2);
+            color: var(--ink);
+            border: none;
+            outline: none;
+            font-family: var(--font-disp);
+            font-size: 1.22rem;
+            line-height: 1.65;
+            padding: 18px;
+            resize: none;
+        }
+
+        .pad {
+            padding: 18px;
+        }
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 4px;
+            border-bottom: 1px solid var(--line);
+        }
+        .settings-row label {
+            font-size: 1.14rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+        .settings-row .hint {
+            display: block;
+            font-size: 0.89rem;
+            font-weight: 400;
+            color: var(--ink-faint);
+            margin-top: 2px;
+        }
+        .settings-row select,
+        .settings-row input[type="range"] {
+            background: var(--panel-3);
+            color: var(--ink);
+            border: 1px solid var(--line-strong);
+            border-radius: 7px;
+            padding: 6px 12px;
+            font-family: var(--font-body);
+            font-size: 0.98rem;
+        }
+        .settings-row input[type="checkbox"] {
+            accent-color: var(--brass);
+            width: 20px;
+            height: 20px;
+        }
+        .settings-section h4 {
+            margin: 20px 0 6px;
+            font-size: 0.86rem;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: var(--ink-faint);
+            font-weight: 700;
+        }
+
+        .about-slate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 6px;
+            text-align: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .about-slate .big-mark {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            background: linear-gradient(155deg, var(--brass-bright), var(--brass) 55%, #8a6438);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-disp);
+            font-weight: 800;
+            font-size: 36px;
+            color: #171008;
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 10px 26px rgba(0, 0, 0, 0.5);
+        }
+        .about-slate .os-name {
+            font-family: var(--font-disp);
+            font-size: 1.56rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .about-slate .meta {
+            margin-top: 14px;
+            font-size: 0.98rem;
+            color: var(--ink-dim);
+            line-height: 1.9;
+            font-family: var(--font-disp);
+        }
+        .about-slate .meta a {
+            color: var(--cyan);
+            text-decoration: none;
+            border-bottom: 1px solid var(--cyan-dim);
+            transition: color .15s;
+        }
+        .about-slate .meta a:hover {
+            color: var(--brass-bright);
+            border-bottom-color: var(--brass-bright);
+        }
+        .about-slate .credit {
+            margin-top: 14px;
+            font-size: 1.02rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .about-divider {
+            width: 60%;
+            height: 1px;
+            background: var(--line-strong);
+            margin: 14px 0;
+        }
+
+        #ctx-menu {
+            position: absolute;
+            background: var(--panel);
+            border: 1px solid var(--line-strong);
+            border-radius: var(--radius);
+            padding: 6px;
+            display: none;
+            z-index: 600;
+            min-width: 200px;
+            box-shadow: var(--shadow-lift);
+        }
+        #ctx-menu button {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 0.96rem;
+            font-weight: 500;
+            padding: 9px 14px;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+        }
+        #ctx-menu button:hover {
+            background: var(--panel-2);
+        }
+
+        #shutdown-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--void-2);
+            z-index: 800;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            color: var(--ink-dim);
+            font-family: var(--font-disp);
+            font-size: 1.05rem;
+        }
+        #shutdown-screen .big-mark {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(155deg, var(--brass-bright), var(--brass) 55%, #8a6438);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 26px;
+            color: #171008;
+            margin-bottom: 6px;
+        }
+        .collapse-anim {
+            animation: collapseY .45s forwards cubic-bezier(.4, 0, .6, 1);
+        }
+        @keyframes collapseY {
+            to {
+                transform: scaleY(0.01);
+                opacity: 0;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--panel-3);
+            border-radius: 5px;
+            border: 2px solid var(--void-2);
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div id="bezel">
+        <div id="screen">
+            <div id="boot-screen"></div>
+            <div id="desktop">
+                <div id="wallpaper"></div>
+                <div id="topbar">
+                    <div class="tb-left">
+                        <button class="tb-btn" id="activities-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                            Activities
+                        </button>
+                        <span class="brand-chip">S</span>
+                        <span class="brand-name">Slate OS</span>
+                    </div>
+                    <div id="topbar-clock">00:00:00</div>
+                    <div class="tb-right">
+                        <span class="tb-icon" title="Volume"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 8a5 5 0 010 8"/></svg></span>
+                        <span class="tb-icon" title="Network"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8.5a16 16 0 0120 0"/><path d="M5.5 12.5a11 11 0 0113 0"/><path d="M9 16.5a6 6 0 016 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg></span>
+                        <button class="tb-icon" id="power-btn" title="Power"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v8"/><path d="M6.3 6.3a9 9 0 1011.4 0"/></svg></button>
+                    </div>
+                </div>
+                <div id="power-menu">
+                    <button data-action="restart"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 4v6h-6"/></svg> Restart</button>
+                    <button data-action="shutdown" class="danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v8"/><path d="M6.3 6.3a9 9 0 1011.4 0"/></svg> Shut Down</button>
+                </div>
+                <div id="activities-overview"><div class="app-grid" id="app-grid"></div></div>
+                <div id="desktop-icons"></div>
+                <div id="windows-container"></div>
+                <div id="dock"></div>
+            </div>
+            <div id="shutdown-screen">
+                <div class="big-mark">S</div>
+                Press any key to power on
+            </div>
+        </div>
+    </div>
+    <div id="ctx-menu"></div>
+
+    <script>
+        'use strict';
+        /* =========================================================
+           ICONS
+           ========================================================= */
+        const ICONS = {
+            terminal: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3"/><path d="M13 15h4"/></svg>`,
+            folder: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>`,
+            file: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/><path d="M9 13h6M9 17h6"/></svg>`,
+            gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 12a7.4 7.4 0 00-.14-1.4l2-1.6-2-3.4-2.4.6a7.6 7.6 0 00-2.4-1.4L14 2h-4l-.5 2.8a7.6 7.6 0 00-2.4 1.4l-2.4-.6-2 3.4 2 1.6a7.4 7.4 0 000 2.8l-2 1.6 2 3.4 2.4-.6a7.6 7.6 0 002.4 1.4L10 22h4l.5-2.8a7.6 7.6 0 002.4-1.4l2.4.6 2-3.4-2-1.6c.1-.46.14-.93.14-1.4z"/></svg>`,
+            info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r="0.9" fill="currentColor" stroke="none"/></svg>`,
+        };
+
+        function iconSVG(name) { return ICONS[name] || ICONS.file; }
+
+        function chip(name, size) { return `<div class="chip-icon" style="${size ? `width:${size}px;height:${size}px` : ''}">${iconSVG(name)}</div>`; }
+
+        /* =========================================================
+           AUDIO ENGINE
+           ========================================================= */
+        const AudioEngine = (() => {
+            let ctx = null,
+                master = null,
+                humOsc = null,
+                humGain = null,
+                volume = 0.55;
+
+            function ensure() {
+                if (!ctx) { ctx = new(window.AudioContext || window.webkitAudioContext)();
+                    master = ctx.createGain();
+                    master.gain.value = volume;
+                    master.connect(ctx.destination); }
+                if (ctx.state === 'suspended') ctx.resume();
+            }
+
+            function tone(freq, dur, type = 'sine', vol = 0.1, delay = 0) {
+                ensure();
+                const o = ctx.createOscillator(),
+                    g = ctx.createGain();
+                o.type = type;
+                o.frequency.value = freq;
+                g.gain.value = 0;
+                o.connect(g);
+                g.connect(master);
+                const t0 = ctx.currentTime + delay;
+                g.gain.setValueAtTime(0, t0);
+                g.gain.linearRampToValueAtTime(vol, t0 + 0.008);
+                g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                o.start(t0);
+                o.stop(t0 + dur + 0.02);
+            }
+
+            function click() { tone(1200, 0.03, 'sine', 0.09); }
+
+            function keytick() { tone(900 + Math.random() * 250, 0.012, 'square', 0.045); }
+
+            function chime() {
+                ensure();
+                [523, 659, 784].forEach((f, i) => tone(f, 0.4, 'sine', 0.10, i * 0.08));
+            }
+
+            function error() { tone(160, 0.2, 'sawtooth', 0.14); }
+
+            function powerDown() {
+                ensure();
+                const o = ctx.createOscillator(),
+                    g = ctx.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(500, ctx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.8);
+                g.gain.setValueAtTime(0.20, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.8);
+                o.connect(g);
+                g.connect(master);
+                o.start();
+                o.stop(ctx.currentTime + 0.85);
+            }
+
+            function startHum() {
+                ensure();
+                if (humOsc) return;
+                humOsc = ctx.createOscillator();
+                humGain = ctx.createGain();
+                humOsc.type = 'sine';
+                humOsc.frequency.value = 55;
+                humGain.gain.value = 0.015;
+                humOsc.connect(humGain);
+                humGain.connect(master);
+                humOsc.start();
+            }
+
+            function stopHum() {
+                if (humOsc) { humOsc.stop();
+                    humOsc = null; }
+            }
+
+            function setVolume(v) { volume = v; if (master) master.gain.value = v; }
+
+            return { click, keytick, chime, error, powerDown, startHum, stopHum, setVolume, ensure };
+        })();
+
+        /* =========================================================
+           CLOCK
+           ========================================================= */
+        function tickClock() { const d = new Date(); const tc = document.getElementById('topbar-clock'); if (tc) tc.textContent = d
+                .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); }
+        setInterval(tickClock, 1000);
+        tickClock();
+
+        /* =========================================================
+           VIRTUAL FILESYSTEM — case‑insensitive, with execute bit
+           ========================================================= */
+        class VirtualFS {
+            constructor() {
+                this.root = this._dir();
+                this.cwd = '/home/slate';
+                this.username = 'slate';
+                this.hostname = 'slate-os';
+                this.bootTime = Date.now();
+                this._seed();
+            }
+            _dir(mode) { return { type: 'dir', mode: mode || 'drwxr-xr-x', mtime: Date.now(), children: {} }; }
+            _file(content, mode) { return { type: 'file', mode: mode || '-rw-r--r--', mtime: Date.now(), content: content ||
+                        '' }; }
+
+            _findChild(node, name) {
+                if (!node || node.type !== 'dir') return null;
+                const lower = name.toLowerCase();
+                for (const key in node.children) {
+                    if (key.toLowerCase() === lower) return key;
+                }
+                return null;
+            }
+
+            _seed() {
+                this.mkdir('/bin');
+                this.mkdir('/etc');
+                this.mkdir('/home');
+                this.mkdir('/root');
+                this.mkdir('/usr');
+                this.mkdir('/usr/bin');
+                this.mkdir('/usr/lib');
+                this.mkdir('/usr/local/bin');
+                this.mkdir('/var');
+                this.mkdir('/var/log');
+                this.mkdir('/tmp');
+                this.mkdir('/opt');
+                this.mkdir('/mnt');
+                this.mkdir('/srv');
+                this.mkdir('/dev');
+
+                this.writeFile('/etc/hostname', 'slate-os\n');
+                this.writeFile('/etc/hosts', '127.0.0.1 localhost\n::1 localhost\n');
+                this.writeFile('/etc/os-release', 'NAME="Slate OS"\nVERSION="rolling"\nID=slate\nPRETTY_NAME="Slate OS"\n');
+                this.writeFile('/etc/passwd', 'root:x:0:0:root:/root:/bin/bash\nslate:x:1000:1000:Slate:/home/slate:/bin/bash\n');
+                this.writeFile('/etc/motd', 'Welcome to Slate OS — a machine built for the terminal.\n');
+                this.writeFile('/etc/fstab', '# /etc/fstab\n/dev/sda1 / ext4 defaults 0 1\n');
+
+                this.mkdir('/home/slate');
+                this.mkdir('/home/slate/Documents');
+                this.mkdir('/home/slate/Downloads');
+                this.mkdir('/home/slate/Pictures');
+                this.mkdir('/home/slate/Projects');
+                this.mkdir('/home/slate/.config');
+                this.mkdir('/home/slate/.ssh');
+
+                this.writeFile('/home/slate/.bashrc',
+                    '# ~/.bashrc\nexport PS1="\\\\u@\\\\h:\\\\w\\\\$ "\nalias ll="ls -la"\nalias la="ls -A"\nalias grep="grep --color=auto"\n');
+                this.writeFile('/home/slate/Documents/notes.txt',
+                    'Welcome to Slate OS.\n\nThis is a real, working simulated shell:\n  - pipes and redirection actually work\n  - files you edit are actually saved\n  - ls, grep, find, sed, awk behave like the real thing\n\nType `help` to see every command, or `man <command>` for details.\n'
+                    );
+                this.writeFile('/home/slate/Documents/todo.txt',
+                    '- Explore the filesystem with ls / cd / find\n- Try: cat notes.txt | grep Slate\n- Try: ls -l | sort\n- Open Files and double-click something\n'
+                    );
+                this.writeFile('/home/slate/Projects/hello.sh', '#!/bin/bash\necho "Hello from Slate OS"\n', '-rwxr-xr-x');
+                this.writeFile('/home/slate/Downloads/README.md', '# Slate OS\n\nA terminal-first desktop, rendered entirely in the browser.\n'
+                    );
+                this.writeFile('/var/log/system.log',
+                    '[boot] slate-os kernel 6.12.0-slate initialized\n[boot] all services nominal\n');
+                this.writeFile('/var/log/auth.log',
+                    'Jan 1 00:00:00 slate sshd[123]: Accepted password for slate from 192.168.1.100\n');
+                this.writeFile('/home/slate/test.sh', '#!/bin/bash\necho "Hello from a script!"\necho "Current directory: $(pwd)"\nls -l\necho "Done."\n',
+                    '-rwxr-xr-x');
+            }
+
+            _norm(p) { if (!p) return '/'; const parts = p.split('/').filter(x => x && x !== '.'); const out = [];
+                for (const part of parts) { if (part === '..') out.pop();
+                    else out.push(part); } return '/' + out.join('/'); }
+
+            resolve(p) {
+                if (!p || p === '~') return '/home/' + this.username;
+                if (p.startsWith('~/')) return this._norm('/home/' + this.username + '/' + p.slice(2));
+                if (p.startsWith('/')) return this._norm(p);
+                return this._norm(this.cwd + '/' + p);
+            }
+
+            _walk(path) {
+                const norm = this._norm(path);
+                if (norm === '/') return this.root;
+                const parts = norm.split('/').filter(Boolean);
+                let node = this.root;
+                for (const part of parts) {
+                    if (node.type !== 'dir') return null;
+                    const key = this._findChild(node, part);
+                    if (!key) return null;
+                    node = node.children[key];
+                }
+                return node;
+            }
+
+            _parentOf(path) {
+                const norm = this._norm(path);
+                const parts = norm.split('/').filter(Boolean);
+                if (parts.length === 0) return { parent: null, name: '', dirPath: '/' };
+                const name = parts.pop();
+                const parentPath = '/' + parts.join('/');
+                const parent = this._walk(parentPath);
+                if (!parent || parent.type !== 'dir') return { parent: null, name, dirPath: parentPath };
+                const key = this._findChild(parent, name);
+                return { parent, name: key || name, dirPath: parentPath };
+            }
+
+            exists(p) { return this._walk(p) !== null; }
+            isDir(p) { const n = this._walk(p); return !!n && n.type === 'dir'; }
+            isFile(p) { const n = this._walk(p); return !!n && n.type === 'file'; }
+            isExecutable(p) { const n = this._walk(p); return n && n.type === 'file' && n.mode && n.mode.includes('x'); }
+            stat(p) { return this._walk(p); }
+
+            mkdir(p, recursive) {
+                const norm = this._norm(p);
+                const parts = norm.split('/').filter(Boolean);
+                let node = this.root,
+                    built = '';
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+                    built += '/' + part;
+                    const key = this._findChild(node, part);
+                    if (!key) {
+                        if (i < parts.length - 1 && !recursive) return { ok: false, err: `mkdir: cannot create directory '${p}': No such file or directory` };
+                        node.children[part] = this._dir();
+                        node = node.children[part];
+                    } else {
+                        const child = node.children[key];
+                        if (child.type !== 'dir') {
+                            return { ok: false, err: `mkdir: cannot create directory '${p}': Not a directory` };
+                        }
+                        if (i === parts.length - 1 && !recursive) {
+                            return { ok: false, err: `mkdir: cannot create directory '${p}': File exists` };
+                        }
+                        node = child;
+                    }
+                }
+                return { ok: true };
+            }
+
+            touch(p) {
+                if (this.exists(p)) { this._walk(p).mtime = Date.now(); return { ok: true }; }
+                const { parent, name } = this._parentOf(p);
+                if (!parent || parent.type !== 'dir') return { ok: false, err: `touch: cannot touch '${p}': No such file or directory` };
+                parent.children[name] = this._file('');
+                return { ok: true };
+            }
+
+            writeFile(p, content, mode) {
+                const { parent, name } = this._parentOf(p);
+                if (!parent || parent.type !== 'dir') return false;
+                const key = this._findChild(parent, name);
+                if (key && parent.children[key].type === 'dir') return false;
+                parent.children[name] = this._file(content, mode);
+                return true;
+            }
+
+            appendFile(p, content) {
+                const existing = this.isFile(p) ? this._walk(p).content : '';
+                return this.writeFile(p, existing + content);
+            }
+
+            readFile(p) { const n = this._walk(p); return (n && n.type === 'file') ? n.content : null; }
+
+            listDir(p) {
+                const n = this._walk(p);
+                if (!n || n.type !== 'dir') return null;
+                return Object.keys(n.children).map(name => {
+                    const c = n.children[name];
+                    return { name, isFile: c.type === 'file', mode: c.mode, mtime: c.mtime, size: c.type ===
+                            'file' ? (c.content || '').length : this._dirSize(c) };
+                });
+            }
+
+            _dirSize(node) { let total = 0; for (const k in node.children) { const c = node.children[k];
+                    total += c.type === 'file' ? (c.content || '').length : this._dirSize(c) + 4096; } return total; }
+
+            rm(p, recursive, force) {
+                const { parent, name } = this._parentOf(p);
+                if (!parent || !parent.children[name]) { return force ? { ok: true } : { ok: false,
+                        err: `rm: cannot remove '${p}': No such file or directory` }; }
+                const node = parent.children[name];
+                if (node.type === 'dir' && !recursive) { return { ok: false, err: `rm: cannot remove '${p}': Is a directory` }; }
+                delete parent.children[name];
+                return { ok: true };
+            }
+
+            rmdir(p) {
+                const { parent, name } = this._parentOf(p);
+                if (!parent || !parent.children[name]) return { ok: false, err: `rmdir: failed to remove '${p}': No such file or directory` };
+                const node = parent.children[name];
+                if (node.type !== 'dir') return { ok: false, err: `rmdir: failed to remove '${p}': Not a directory` };
+                if (Object.keys(node.children).length > 0) return { ok: false,
+                    err: `rmdir: failed to remove '${p}': Directory not empty` };
+                delete parent.children[name];
+                return { ok: true };
+            }
+
+            _clone(node) {
+                if (node.type === 'file') return this._file(node.content, node.mode);
+                const d = this._dir(node.mode);
+                for (const k in node.children) d.children[k] = this._clone(node.children[k]);
+                return d;
+            }
+
+            cp(src, dst, recursive) {
+                const s = this._walk(src);
+                if (!s) return { ok: false, err: `cp: cannot stat '${src}': No such file or directory` };
+                if (s.type === 'dir' && !recursive) return { ok: false, err: `cp: -r not specified; omitting directory '${src}'` };
+                let target = dst;
+                if (this.isDir(dst)) {
+                    const base = src.split('/').filter(Boolean).pop() || src;
+                    target = this._norm(dst + '/' + base);
+                }
+                const { parent, name } = this._parentOf(target);
+                if (!parent || parent.type !== 'dir') return { ok: false,
+                    err: `cp: cannot create '${dst}': No such file or directory` };
+                parent.children[name] = this._clone(s);
+                return { ok: true };
+            }
+
+            mv(src, dst) {
+                const s = this._walk(src);
+                if (!s) return { ok: false, err: `mv: cannot stat '${src}': No such file or directory` };
+                let target = dst;
+                if (this.isDir(dst)) {
+                    const base = src.split('/').filter(Boolean).pop() || src;
+                    target = this._norm(dst + '/' + base);
+                }
+                const { parent, name } = this._parentOf(target);
+                if (!parent || parent.type !== 'dir') return { ok: false,
+                    err: `mv: cannot move to '${dst}': No such file or directory` };
+                parent.children[name] = s;
+                const sp = this._parentOf(src);
+                if (sp.parent) delete sp.parent.children[sp.name];
+                return { ok: true };
+            }
+
+            ln(src, dst, symbolic) {
+                const s = this._walk(src);
+                if (!s) return { ok: false, err: `ln: cannot stat '${src}': No such file or directory` };
+                let target = dst;
+                if (this.isDir(dst)) {
+                    const base = src.split('/').filter(Boolean).pop() || src;
+                    target = this._norm(dst + '/' + base);
+                }
+                const { parent, name } = this._parentOf(target);
+                if (!parent || parent.type !== 'dir') return { ok: false,
+                    err: `ln: cannot create '${dst}': No such file or directory` };
+                if (parent.children[name]) return { ok: false, err: `ln: '${target}' already exists` };
+                const linkContent = symbolic ? 'symlink:' + src : 'hardlink:' + src;
+                parent.children[name] = this._file(linkContent, symbolic ? 'lrwxrwxrwx' : '-rw-r--r--');
+                return { ok: true };
+            }
+
+            chmod(p, mode) {
+                const n = this._walk(p);
+                if (!n) return { ok: false, err: `chmod: cannot access '${p}': No such file or directory` };
+                n.mode = mode;
+                return { ok: true };
+            }
+        }
+
+        /* =========================================================
+           MARKUP HELPERS
+           ========================================================= */
+        const M1 = '\u0001',
+            M2 = '\u0002',
+            M3 = '\u0003';
+
+        function mark(type, text) { return M1 + type + M2 + text + M3; }
+
+        /* =========================================================
+           COMMAND ENGINE — full Linux-like shell with job control
+           ========================================================= */
+        class CommandEngine {
+            constructor(fs) {
+                this.fs = fs;
+                this.commands = {};
+                this.aliases = { ll: 'ls -la', la: 'ls -A', l: 'ls -CF', h: 'history', grep: 'grep', cls: 'clear',
+                    rm: 'rm -i' };
+                this.env = { PATH: '/bin:/usr/bin:/usr/local/bin', HOME: '/home/slate', USER: 'slate', SHELL: '/bin/bash',
+                    TERM: 'xterm-256color', LANG: 'en_US.UTF-8', PS1: '\\u@\\h:\\w\\$ ', OLDPWD: '' };
+                this.history = [];
+                this.historyIndex = -1;
+                this.lastExit = 0;
+                this.jobs = [];
+                this.jobCounter = 0;
+                this.inScript = false;
+                this._register();
+            }
+
+            cmd(name, fn) { this.commands[name.toLowerCase()] = fn; }
+
+            _register() {
+                const R = (n, f) => this.cmd(n, f.bind(this));
+                // Core
+                R('ls', this._ls);
+                R('cd', this._cd);
+                R('pwd', this._pwd);
+                R('echo', this._echo);
+                R('printf', this._printf);
+                R('cat', this._cat);
+                R('clear', this._clear);
+                R('reset', this._clear);
+                R('whoami', this._whoami);
+                R('date', this._date);
+                R('cal', this._cal);
+                R('uname', this._uname);
+                R('hostname', this._hostname);
+                R('uptime', this._uptime);
+                R('free', this._free);
+                R('df', this._df);
+                R('du', this._du);
+                R('ps', this._ps);
+                R('top', this._top);
+                // Filesystem
+                R('mkdir', this._mkdir);
+                R('rmdir', this._rmdir);
+                R('rm', this._rm);
+                R('cp', this._cp);
+                R('mv', this._mv);
+                R('touch', this._touch);
+                R('chmod', this._chmod);
+                R('chown', this._chown);
+                R('ln', this._ln);
+                R('mount', this._mount);
+                R('umount', this._umount);
+                // Search
+                R('grep', this._grep);
+                R('find', this._find);
+                // Text
+                R('head', this._head);
+                R('tail', this._tail);
+                R('wc', this._wc);
+                R('sort', this._sort);
+                R('uniq', this._uniq);
+                R('cut', this._cut);
+                R('sed', this._sed);
+                R('awk', this._awk);
+                // Compression
+                R('tar', this._tar);
+                R('gzip', this._gzip);
+                R('gunzip', this._gunzip);
+                // Network
+                R('ping', this._ping);
+                R('ssh', this._ssh);
+                R('scp', this._scp);
+                R('wget', this._wget);
+                R('curl', this._curl);
+                R('netstat', this._netstat);
+                R('ifconfig', this._ifconfig);
+                R('nmap', this._nmap);
+                R('traceroute', this._traceroute);
+                R('dig', this._dig);
+                R('nslookup', this._nslookup);
+                R('whois', this._whois);
+                // Security
+                R('msfconsole', this._msfconsole);
+                R('aircrack-ng', this._aircrack);
+                R('sqlmap', this._sqlmap);
+                R('hydra', this._hydra);
+                R('john', this._john);
+                R('hashcat', this._hashcat);
+                R('metasploit', this._metasploit);
+                // Process / Job control
+                R('kill', this._kill);
+                R('crontab', this._crontab);
+                R('jobs', this._jobs);
+                R('fg', this._fg);
+                R('bg', this._bg);
+                R('source', this._source);
+                // Shell
+                R('man', this._man);
+                R('history', this._history);
+                R('alias', this._alias);
+                R('unalias', this._unalias);
+                R('export', this._export);
+                R('unset', this._unset);
+                R('env', this._env);
+                R('printenv', this._printenv);
+                R('which', this._which);
+                R('type', this._type);
+                R('file', this._file);
+                R('stat', this._stat);
+                R('sudo', this._sudo);
+                R('su', this._su);
+                R('tree', this._tree);
+                R('help', this._help);
+                R('neofetch', this._neofetch);
+                // System info
+                R('dmesg', this._dmesg);
+                R('lsblk', this._lsblk);
+                R('lspci', this._lspci);
+                R('lsusb', this._lsusb);
+                // No-ops
+                R('sleep', this._sleep);
+                R('true', () => ({ output: '', error: '', exitCode: 0 }));
+                R('false', () => ({ output: '', error: '', exitCode: 1 }));
+                R('yes', () => ({ output: 'y\n', error: '', exitCode: 0 }));
+            }
+
+            // ---------- utilities ----------
+            _flags(args) { const flags = new Set(); const rest = [];
+                for (const a of args) {
+                    if (a.startsWith('--')) flags.add(a.slice(2));
+                    else if (a.startsWith('-') && a.length > 1) { for (const c of a.slice(1)) flags.add(c); } else rest.push(a);
+                }
+                return { flags, rest }; }
+
+            _err(cmd, msg) { return { output: '', error: `${cmd}: ${msg}\n`, exitCode: 1 }; }
+            _ok(output) { return { output, error: '', exitCode: 0 }; }
+            _human(bytes) { const u = ['B', 'K', 'M', 'G', 'T']; let s = bytes,
+                    i = 0; while (s >= 1024 && i < 4) { s /= 1024;
+                    i++; } return (Math.round(s * 10) / 10) + u[i]; }
+            _fmtDate(ts) { const d = new Date(ts); const mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+                    'Oct', 'Nov', 'Dec'
+                ][d.getMonth()];
+                return `${mo} ${String(d.getDate()).padStart(2,' ')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+            _fmtTime(ts) { const d = new Date(ts); return d.toLocaleTimeString(); }
+
+            _expand(tok) {
+                return tok.replace(/\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)|\$\?/g, (m, a, b) => {
+                    if (m === '$?') return String(this.lastExit);
+                    const name = a || b;
+                    return this.env[name] !== undefined ? this.env[name] : '';
+                });
+            }
+
+            _tokenize(line) {
+                const tokens = [];
+                const re = /"([^"]*)"|'([^']*)'|(\|\||&&|\|\||;|&|>>|>|<)|#([^#]*)$|(\S+)/g;
+                let m;
+                while ((m = re.exec(line))) {
+                    if (m[1] !== undefined) tokens.push(this._expand(m[1]));
+                    else if (m[2] !== undefined) tokens.push(m[2]);
+                    else if (m[3] !== undefined) tokens.push(m[3]);
+                    else if (m[4] !== undefined) { /* comment, ignore */ } else if (m[5] !== undefined) tokens.push(this
+                        ._expand(m[5]));
+                }
+                return tokens;
+            }
+
+            _parsePipeline(tokens) {
+                const segments = [];
+                let cur = [];
+                for (const t of tokens) {
+                    if (t === '|') { segments.push(cur);
+                        cur = []; } else cur.push(t);
+                }
+                if (cur.length) segments.push(cur);
+                return segments;
+            }
+
+            // ---------- core commands ----------
+            _ls(args) { const { flags, rest } = this._flags(args);
+                const targets = rest.length ? rest : ['.'];
+                let out = '';
+                let anyErr = false,
+                    errText = '';
+                targets.forEach((t, idx) => {
+                    const path = this.fs.resolve(t);
+                    if (!this.fs.exists(path)) { errText += `ls: cannot access '${t}': No such file or directory\n`;
+                        anyErr = true; return; }
+                    if (this.fs.isFile(path)) {
+                        out += mark('f', t) + '\n';
+                        return;
+                    }
+                    let entries = this.fs.listDir(path) || [];
+                    if (!flags.has('a') && !flags.has('A')) entries = entries.filter(e => !e.name.startsWith('.'));
+                    entries.sort((a, b) => a.name.localeCompare(b.name));
+                    if (targets.length > 1) out += `${t}:\n`;
+                    if (flags.has('l')) {
+                        for (const e of entries) {
+                            const size = flags.has('h') ? this._human(e.size) : String(e.size);
+                            out +=
+                                `${e.mode}  ${size.padStart(6,' ')}  ${this._fmtDate(e.mtime)}  ${mark(e.isFile?'f':'d', e.name)}\n`;
+                        }
+                    } else {
+                        out += entries.map(e => mark(e.isFile ? 'f' : 'd', e.name)).join('  ') + (entries.length ?
+                            '\n' : '');
+                    }
+                    if (idx < targets.length - 1) out += '\n';
+                });
+                if (anyErr && !out) return { output: '', error: errText, exitCode: 1 };
+                return { output: out, error: errText, exitCode: anyErr ? 1 : 0 }; }
+
+            _cd(args) { const target = args[0] || '~';
+                const path = this.fs.resolve(target);
+                if (!this.fs.exists(path)) return this._err('cd', `no such file or directory: ${target}`);
+                if (!this.fs.isDir(path)) return this._err('cd', `not a directory: ${target}`);
+                this.env.OLDPWD = this.fs.cwd;
+                this.fs.cwd = path;
+                this.env.PWD = path;
+                return this._ok(''); }
+
+            _pwd() { return this._ok(this.fs.cwd + '\n'); }
+
+            _echo(args) { const { flags, rest } = this._flags(args);
+                let text = rest.join(' ');
+                if (flags.has('e')) text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+                return this._ok(text + '\n'); }
+
+            _printf(args) {
+                if (!args.length) return this._ok('');
+                let format = args[0];
+                const vals = args.slice(1);
+                let out = format;
+                for (let i = 0; i < vals.length; i++) {
+                    out = out.replace(/%s/, vals[i]);
+                }
+                out = out.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+                return this._ok(out);
+            }
+
+            _cat(args, stdin) { const { rest } = this._flags(args); if (rest.length === 0) return this._ok(stdin !==
+                    undefined ? stdin : '');
+                let out = '',
+                    err = '';
+                for (const f of rest) {
+                    const path = this.fs.resolve(f);
+                    if (!this.fs.exists(path)) { err += `cat: ${f}: No such file or directory\n`; continue; }
+                    if (this.fs.isDir(path)) { err += `cat: ${f}: Is a directory\n`; continue; }
+                    out += this.fs.readFile(path);
+                }
+                return { output: out, error: err, exitCode: err ? 1 : 0 }; }
+
+            _clear() { return { output: '\x1bCLEAR\x1b', error: '', exitCode: 0 }; }
+
+            _whoami() { return this._ok(this.fs.username + '\n'); }
+
+            _date(args) { const now = new Date(); const f = args[0]; if (f === '+%s') return this._ok(Math.floor(now
+                    .getTime() / 1000) + '\n'); if (f === '+%Y-%m-%d') return this._ok(now.toISOString().slice(0, 10) +
+                    '\n'); return this._ok(now.toDateString() + ' ' + now.toTimeString().slice(0, 8) + '\n'); }
+
+            _cal() { const now = new Date(); const y = now.getFullYear(),
+                    m = now.getMonth(); const first = new Date(y, m, 1).getDay(); const days = new Date(y, m + 1, 0)
+                    .getDate(); const name = now.toLocaleString('default', { month: 'long' });
+                let out = `    ${name} ${y}\nSu Mo Tu We Th Fr Sa\n`;
+                let line = ' '.repeat(first * 3);
+                for (let d = 1; d <= days; d++) { const marked = d === now.getDate() ? mark('c', String(d).padStart(2,
+                        ' ')) : String(d).padStart(2, ' ');
+                    line += marked + ' ';
+                    if ((first + d) % 7 === 0) { out += line + '\n';
+                        line = ''; } }
+                if (line.trim()) out += line + '\n';
+                return this._ok(out); }
+
+            _uname(args) { const { flags } = this._flags(args); if (flags.has('a')) return this._ok(
+                    'Linux slate-os 6.12.0-slate #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux\n'); if (flags.has('r')) return this
+                    ._ok('6.12.0-slate\n'); if (flags.has('m')) return this._ok('x86_64\n'); if (flags.has('s')) return this
+                    ._ok('Linux\n'); if (flags.has('n')) return this._ok(this.fs.hostname + '\n'); return this._ok(
+                    'Linux\n'); }
+
+            _hostname(args) { if (args.length) { this.fs.hostname = args[0]; return this._ok(''); } return this._ok(this.fs
+                    .hostname + '\n'); }
+
+            _uptime() { const s = Math.floor((Date.now() - this.fs.bootTime) / 1000); const m = Math.floor(s / 60),
+                    h = Math.floor(m / 60); return this._ok(` up ${h}h ${m%60}m, 1 user, load average: 0.12, 0.09, 0.05\n`); }
+
+            _free(args) { const { flags } = this._flags(args); const total = 8388608,
+                    used = 2621440 + Math.floor(Math.random() * 200000),
+                    free = total - used; const f = v => flags.has('h') ? this._human(v * 1024) : String(v); return this
+                    ._ok(
+                        `              total        used        free\nMem:     ${f(total).padStart(10)} ${f(used).padStart(10)} ${f(free).padStart(10)}\nSwap:    ${f(2097152).padStart(10)} ${f(0).padStart(10)} ${f(2097152).padStart(10)}\n`
+                        ); }
+
+            _df(args) { const { flags } = this._flags(args); const f = v => flags.has('h') ? this._human(v * 1024) : String(
+                    v); return this._ok(
+                    `Filesystem      Size  Used Avail Use%  Mounted on\n/dev/sda1       ${f(41943040).padStart(5)} ${f(9437184).padStart(5)} ${f(32505856).padStart(6)}  23%   /\ntmpfs           ${f(4194304).padStart(5)} ${f(0).padStart(5)} ${f(4194304).padStart(6)}   0%   /tmp\n/dev/sdb1       ${f(10485760).padStart(5)} ${f(2097152).padStart(5)} ${f(8388608).padStart(6)}  20%   /mnt\n`
+                    ); }
+
+            _du(args) { const { flags, rest } = this._flags(args); const target = this.fs.resolve(rest[0] || '.');
+                if (!this.fs.exists(target)) return this._err('du', `cannot access '${rest[0]||'.'}': No such file or directory`);
+                const size = this.fs.isFile(target) ? this.fs.readFile(target).length : this.fs._dirSize(this.fs._walk(
+                    target));
+                const disp = flags.has('h') ? this._human(size) : String(Math.ceil(size / 1024));
+                return this._ok(`${disp}\t${rest[0]||'.'}\n`); }
+
+            _ps(args) { const { flags } = this._flags(args);
+                let rows = [
+                    ['1', 'systemd', '0:01'],
+                    ['118', 'NetworkManager', '0:04'],
+                    ['244', 'sshd', '0:00'],
+                    ['512', 'bash', '0:02'],
+                    ['890', 'slate-shell', '0:01'],
+                ];
+                // Add background jobs
+                for (const job of this.jobs) {
+                    rows.push([job.pid, job.cmd.split(' ')[0] || 'job', '0:00']);
+                }
+                let out = flags.has('a') || flags.has('e') || flags.has('aux') ?
+                    '  PID TTY      STAT   TIME COMMAND\n' :
+                    '  PID TTY          TIME CMD\n';
+                const useAux = flags.has('aux') || flags.has('ef');
+                for (const [pid, name, time] of rows) {
+                    if (useAux) {
+                        out += `${pid.padStart(5)} ?        Ss    ${(time||'0:00').padStart(5)} ${name}\n`;
+                    } else {
+                        out += `${pid.padStart(5)} pts/0    00:00:${(time||'0:01')} ${name}\n`;
+                    }
+                }
+                return this._ok(out); }
+
+            _top() { const rows = [
+                    ['PID', 'USER', 'PR', 'NI', 'VIRT', 'RES', 'SHR', 'S', '%CPU', '%MEM', 'TIME+', 'COMMAND'],
+                    ['1', 'root', '20', '0', '168m', '12m', '8m', 'S', '0.3', '0.2', '0:01.23', 'systemd'],
+                    ['118', 'root', '20', '0', '124m', '8m', '6m', 'S', '0.1', '0.1', '0:04.56', 'NetworkManager'],
+                    ['244', 'root', '20', '0', '88m', '6m', '4m', 'S', '0.0', '0.1', '0:00.89', 'sshd'],
+                    ['512', 'slate', '20', '0', '72m', '4m', '3m', 'S', '0.2', '0.1', '0:02.34', 'bash'],
+                    ['890', 'slate', '20', '0', '96m', '6m', '4m', 'R', '1.2', '0.1', '0:01.67', 'slate-shell'],
+                ];
+                let out =
+                    `top - ${this._fmtTime(Date.now())} up ${Math.floor((Date.now()-this.fs.bootTime)/60000)} min, 1 user, load avg: 0.12, 0.09, 0.05\nTasks: ${rows.length-1} total, 1 running, ${rows.length-2} sleeping\n%Cpu(s): 2.5 us, 1.2 sy, 0.0 ni, 95.8 id\nMiB Mem : 8192.0 total, 5120.0 free, 2048.0 used, 1024.0 buff/cache\nMiB Swap: 2048.0 total, 2048.0 free, 0.0 used\n\n`;
+                for (const row of rows) {
+                    out += row.map(c => String(c).padEnd(10)).join(' ') + '\n';
+                }
+                return this._ok(out); }
+
+            // ---------- filesystem ----------
+            _mkdir(args) { const { flags, rest } = this._flags(args); if (!rest.length) return this._err('mkdir',
+                    'missing operand');
+                let err = '';
+                for (const p of rest) { const r = this.fs.mkdir(this.fs.resolve(p), flags.has('p')); if (!r.ok) err += r
+                        .err + '\n'; }
+                return { output: '', error: err, exitCode: err ? 1 : 0 }; }
+
+            _rmdir(args) { if (!args.length) return this._err('rmdir', 'missing operand');
+                let err = '';
+                for (const p of args) { const r = this.fs.rmdir(this.fs.resolve(p)); if (!r.ok) err += r.err + '\n'; }
+                return { output: '', error: err, exitCode: err ? 1 : 0 }; }
+
+            _rm(args) { const { flags, rest } = this._flags(args); if (!rest.length) return this._err('rm',
+                    'missing operand');
+                let err = '';
+                for (const p of rest) { const r = this.fs.rm(this.fs.resolve(p), flags.has('r') || flags.has('R'), flags
+                        .has('f')); if (!r.ok) err += r.err + '\n'; }
+                return { output: '', error: err, exitCode: err ? 1 : 0 }; }
+
+            _cp(args) { const { flags, rest } = this._flags(args); if (rest.length < 2) return this._err('cp',
+                    'missing file operand');
+                const dst = rest[rest.length - 1];
+                let err = '';
+                for (let i = 0; i < rest.length - 1; i++) { const r = this.fs.cp(this.fs.resolve(rest[i]), this.fs.resolve(
+                        dst), flags.has('r') || flags.has('R')); if (!r.ok) err += r.err + '\n'; }
+                return { output: '', error: err, exitCode: err ? 1 : 0 }; }
+
+            _mv(args) { const { rest } = this._flags(args); if (rest.length < 2) return this._err('mv',
+                    'missing file operand');
+                const dst = rest[rest.length - 1];
+                let err = '';
+                for (let i = 0; i < rest.length - 1; i++) { const r = this.fs.mv(this.fs.resolve(rest[i]), this.fs.resolve(
+                        dst)); if (!r.ok) err += r.err + '\n'; }
+                return { output: '', error: err, exitCode: err ? 1 : 0 }; }
+
+            _touch(args) { if (!args.length) return this._err('touch', 'missing file operand');
+                let err = '';
+                for (const p of args) { const r = this.fs.touch(this.fs.resolve(p)); if (!r.ok) err += r.err + '\n'; }
+                return { output: '', error: err, exitCode: err ? 1 : 0 }; }
+
+            _chmod(args) { const { rest } = this._flags(args); if (rest.length < 2) return this._err('chmod',
+                    'missing operand');
+                const mode = rest[0];
+                const path = this.fs.resolve(rest[1]);
+                const r = this.fs.chmod(path, mode);
+                if (!r.ok) return this._err('chmod', r.err);
+                return this._ok(''); }
+
+            _chown() { return this._ok(''); }
+
+            _ln(args) { const { flags, rest } = this._flags(args); if (rest.length < 2) return this._err('ln',
+                    'missing operand');
+                const src = rest[0],
+                    dst = rest[1];
+                const r = this.fs.ln(this.fs.resolve(src), this.fs.resolve(dst), flags.has('s'));
+                if (!r.ok) return this._err('ln', r.err);
+                return this._ok(''); }
+
+            _mount() { return this._ok(
+                    `/dev/sda1 on / type ext4 (rw,relatime)\ntmpfs on /tmp type tmpfs (rw,nosuid,nodev)\n/dev/sdb1 on /mnt type ext4 (rw,relatime)\n`
+                    ); }
+
+            _umount() { return this._ok(''); }
+
+            // ---------- search ----------
+            _inputLines(args, stdin, cmdName) {
+                const { rest } = this._flags(args);
+                if (rest.length === 0) return { lines: (stdin || '').split('\n'), err: '' };
+                let text = '';
+                let err = '';
+                for (const f of rest) {
+                    const path = this.fs.resolve(f);
+                    if (!this.fs.exists(path)) { err += `${cmdName}: ${f}: No such file or directory\n`; continue; }
+                    text += this.fs.readFile(path);
+                }
+                return { lines: text.split('\n'), err };
+            }
+
+            _grep(args, stdin) {
+                const { flags, rest } = this._flags(args);
+                if (!rest.length) return this._err('grep', 'missing pattern');
+                const pattern = rest[0];
+                const files = rest.slice(1);
+                let re;
+                try { re = new RegExp(pattern, flags.has('i') ? 'i' : ''); } catch (e) { return this._err('grep',
+                        `invalid pattern`); }
+                const { lines, err } = files.length ? this._inputLines(['--', ...files], stdin, 'grep') : { lines: (stdin ||
+                        '').split('\n'), err: '' };
+                let matches = lines.filter(l => { const m = re.test(l); return flags.has('v') ? !m : m; });
+                if (matches.length && matches[matches.length - 1] === '') matches = matches.slice(0, -1);
+                if (flags.has('c')) return { output: String(matches.length) + '\n', error: err, exitCode: matches.length ?
+                        0 : 1 };
+                let out = matches.map((l, i) => l.replace(re, m => mark('m', m)) + '\n').join('');
+                if (flags.has('n')) {
+                    out = '';
+                    let n = 0;
+                    for (const l of lines) { n++; const m = re.test(l); const hit = flags.has('v') ? !m : m; if (hit) out +=
+                            `${n}:${l.replace(re,mm=>mark('m',mm))}\n`; }
+                }
+                return { output: out, error: err, exitCode: matches.length ? 0 : 1 };
+            }
+
+            _find(args) {
+                const { rest } = this._flags(args);
+                let startArg = '.',
+                    namePattern = null,
+                    typeFilter = null,
+                    execCmd = null;
+                for (let i = 0; i < rest.length; i++) {
+                    if (rest[i] === '-name') { namePattern = rest[++i]; } else if (rest[i] === '-type') { typeFilter = rest[
+                            ++i]; } else if (rest[i] === '-exec') { execCmd = rest.slice(i + 1); break; } else startArg =
+                        rest[i];
+                }
+                const start = this.fs.resolve(startArg);
+                if (!this.fs.exists(start)) return this._err('find', `'${startArg}': No such file or directory`);
+                const results = [];
+                const rx = namePattern ? new RegExp('^' + namePattern.split('*').map(s => s.replace(/[.+?^${}()|[\]\\]/g,
+                    '\\$&')).join('.*') + '$') : null;
+                const walk = (path, node) => {
+                    const base = path.split('/').filter(Boolean).pop() || path;
+                    const isFile = node.type === 'file';
+                    const nameOk = !rx || rx.test(base);
+                    const typeOk = !typeFilter || (typeFilter === 'f' && isFile) || (typeFilter === 'd' && !isFile);
+                    if (nameOk && typeOk) results.push({ path, isFile, base });
+                    if (node.type === 'dir') { for (const k in node.children) walk(path === '/' ? '/' + k : path + '/' + k,
+                            node.children[k]); }
+                };
+                walk(start, this.fs._walk(start));
+                let out = results.map(r => mark(r.isFile ? 'f' : 'd', r.path)).join('\n');
+                if (execCmd) {
+                    const cmdParts = execCmd.filter(c => c !== ';' && c !== '{}');
+                    if (cmdParts.length) {
+                        const cmdName = cmdParts[0];
+                        const cmdArgs = cmdParts.slice(1);
+                        let execOut = '';
+                        for (const r of results) {
+                            const res = this.execute(cmdName, cmdArgs.map(a => a === '{}' ? r.path : a), '');
+                            execOut += res.output;
+                        }
+                        out = execOut || out;
+                    }
+                }
+                return this._ok(out + (results.length && !execCmd ? '\n' : ''));
+            }
+
+            // ---------- text ----------
+            _head(args, stdin) { const { flags, rest } = this._flags(args);
+                let n = 10;
+                for (const f of flags) if (!isNaN(parseInt(f))) n = parseInt(f);
+                const nIdx = args.indexOf('-n'); if (nIdx >= 0 && args[nIdx + 1]) n = parseInt(args[nIdx + 1]) || n;
+                const { lines, err } = this._inputLines(rest.filter(r => r !== String(n)), stdin, 'head');
+                return { output: lines.slice(0, n).join('\n') + (lines.length ? '\n' : ''), error: err, exitCode: err ?
+                        1 : 0 }; }
+
+            _tail(args, stdin) { const { flags, rest } = this._flags(args);
+                let n = 10;
+                const nIdx = args.indexOf('-n'); if (nIdx >= 0 && args[nIdx + 1]) n = parseInt(args[nIdx + 1]) || n;
+                const { lines, err } = this._inputLines(rest.filter(r => r !== String(n)), stdin, 'tail');
+                const l = lines[lines.length - 1] === '' ? lines.slice(0, -1) : lines;
+                return { output: l.slice(-n).join('\n') + (l.length ? '\n' : ''), error: err, exitCode: err ? 1 : 0 }; }
+
+            _wc(args, stdin) { const { flags, rest } = this._flags(args); const { lines, err } = this._inputLines(rest,
+                    stdin, 'wc');
+                const text = lines.join('\n');
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const nl = lines.length && lines[lines.length - 1] === '' ? lines.length - 1 : lines.length;
+                if (flags.has('l')) return { output: nl + '\n', error: err, exitCode: 0 };
+                if (flags.has('w')) return { output: words + '\n', error: err, exitCode: 0 };
+                if (flags.has('c')) return { output: text.length + '\n', error: err, exitCode: 0 };
+                return { output: `${nl} ${words} ${text.length}\n`, error: err, exitCode: 0 }; }
+
+            _sort(args, stdin) { const { flags, rest } = this._flags(args); const { lines, err } = this._inputLines(rest,
+                    stdin, 'sort');
+                let arr = lines.filter((l, i) => !(i === lines.length - 1 && l === ''));
+                arr = flags.has('n') ? arr.sort((a, b) => parseFloat(a) - parseFloat(b)) : arr.sort();
+                if (flags.has('r')) arr.reverse();
+                return { output: arr.join('\n') + (arr.length ? '\n' : ''), error: err, exitCode: 0 }; }
+
+            _uniq(args, stdin) { const { flags, rest } = this._flags(args); const { lines, err } = this._inputLines(rest,
+                    stdin, 'uniq');
+                const arr = lines.filter((l, i) => !(i === lines.length - 1 && l === ''));
+                const out = [];
+                const counts = [];
+                for (const l of arr) { if (out.length && out[out.length - 1] === l) counts[counts.length - 1]++;
+                    else { out.push(l);
+                        counts.push(1); } }
+                const text = flags.has('c') ? out.map((l, i) => `${String(counts[i]).padStart(4)} ${l}`).join('\n') : out
+                    .join('\n');
+                return { output: text + (out.length ? '\n' : ''), error: err, exitCode: 0 }; }
+
+            _cut(args, stdin) { const { rest } = this._flags(args);
+                let delim = '\t',
+                    field = null;
+                for (let i = 0; i < args.length; i++) { if (args[i] === '-d') delim = args[++i]; if (args[i] === '-f')
+                        field = args[++i]; }
+                const { lines, err } = this._inputLines(rest.filter(r => r !== delim && r !== field), stdin, 'cut');
+                if (field === null) return this._err('cut', 'you must specify a list of fields');
+                const idxs = field.split(',').map(n => parseInt(n) - 1);
+                const arr = lines.filter((l, i) => !(i === lines.length - 1 && l === ''));
+                const out = arr.map(l => { const parts = l.split(delim); return idxs.map(i => parts[i] !== undefined ?
+                        parts[i] : '').join(delim); });
+                return { output: out.join('\n') + (out.length ? '\n' : ''), error: err, exitCode: 0 }; }
+
+            _sed(args, stdin) { const { rest } = this._flags(args); if (!rest.length) return this._err('sed', 'no script');
+                const script = rest[0];
+                const files = rest.slice(1);
+                const { lines, err } = files.length ? this._inputLines(['--', ...files], stdin, 'sed') : { lines: (stdin ||
+                        '').split('\n'), err: '' };
+                const m = script.match(/^s\/(.*?)\/(.*?)\/(g?i?)$/);
+                if (!m) return this._err('sed', `unsupported script (use s/pattern/replacement/[g])`);
+                const [, pat, repl, flags2] = m;
+                let re;
+                try { re = new RegExp(pat, flags2.includes('g') ? 'g' + (flags2.includes('i') ? 'i' : '') : (flags2
+                    .includes('i') ? 'i' : '')); } catch (e) { return this._err('sed', 'invalid pattern'); }
+                const out = lines.map(l => l.replace(re, repl));
+                return { output: out.join('\n'), error: err, exitCode: 0 }; }
+
+            _awk(args, stdin) { const { rest } = this._flags(args); if (!rest.length) return this._err('awk', 'no program');
+                let fs2 = ' ';
+                const fIdx = args.indexOf('-F'); if (fIdx >= 0) fs2 = args[fIdx + 1];
+                const program = rest.find(r => r.startsWith('{')) || rest[rest.length - 1];
+                const files = rest.filter(r => r !== program && r !== fs2);
+                const { lines, err } = files.length ? this._inputLines(['--', ...files], stdin, 'awk') : { lines: (stdin ||
+                        '').split('\n'), err: '' };
+                const arr = lines.filter((l, i) => !(i === lines.length - 1 && l === ''));
+                const pm = program.match(/^\{\s*print\s*(.*)\s*\}$/);
+                if (!pm) return this._err('awk', 'unsupported program (use {print $N})');
+                const expr = pm[1].trim();
+                const out = arr.map(l => {
+                    const f = l.split(fs2).filter(x => x !== '' || fs2 !== ' ');
+                    if (expr === '' || expr === '$0') return l;
+                    return expr.split(',').map(tok => { tok = tok.trim();
+                        if (tok === '$0') return l;
+                        const mm = tok.match(/^\$(\d+)$/); if (mm) return f[parseInt(mm[1]) - 1] || '';
+                        return tok.replace(/^"(.*)"$/, '$1'); }).join(' ');
+                });
+                return { output: out.join('\n') + (out.length ? '\n' : ''), error: err, exitCode: 0 }; }
+
+            // ---------- compression ----------
+            _tar(args) { const { flags, rest } = this._flags(args); if (rest.length < 2) return this._err('tar',
+                    'missing operands');
+                const action = flags.has('c') ? 'create' : flags.has('x') ? 'extract' : flags.has('t') ? 'list' : 'unknown';
+                const file = rest.find(r => r.endsWith('.tar') || r.endsWith('.tgz'));
+                const files = rest.filter(r => r !== file);
+                if (action === 'create') {
+                    let out = `tar: creating archive ${file||'archive.tar'}\n`;
+                    for (const f of files) { out += `  adding: ${f}\n`; }
+                    return this._ok(out);
+                } else if (action === 'extract') {
+                    return this._ok(`tar: extracting from ${file||'archive.tar'}\n  extracted ${files.length||'all'} files\n`);
+                } else if (action === 'list') {
+                    const items = this.fs.listDir('/home/slate') || [];
+                    return this._ok(items.slice(0, 8).map(i => i.name).join('\n') + '\n');
+                }
+                return this._err('tar', 'usage: tar -c|-x|-t -f archive.tar [files...]'); }
+
+            _gzip(args) { const { rest } = this._flags(args); if (!rest.length) return this._err('gzip',
+                    'missing file operand');
+                let out = '';
+                for (const f of rest) { const path = this.fs.resolve(f); if (!this.fs.exists(path)) { out +=
+                        `gzip: ${f}: No such file or directory\n`; continue; } out += `gzip: compressing ${f} -> ${f}.gz\n`; }
+                return this._ok(out); }
+
+            _gunzip(args) { const { rest } = this._flags(args); if (!rest.length) return this._err('gunzip',
+                    'missing file operand');
+                let out = '';
+                for (const f of rest) { const path = this.fs.resolve(f); if (!this.fs.exists(path)) { out +=
+                        `gunzip: ${f}: No such file or directory\n`; continue; } out += `gunzip: decompressing ${f}\n`; }
+                return this._ok(out); }
+
+            // ---------- network (simulated) ----------
+            _ping(args) { const target = args[0] || 'localhost'; return this._ok(
+                    `PING ${target} (127.0.0.1) 56(84) bytes of data.\n64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.123 ms\n64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.089 ms\n64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.101 ms\n\n--- ${target} ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2002ms\n`
+                    ); }
+
+            _ssh(args) { const target = args[0] || 'user@host'; return this._ok(
+                    `ssh: connecting to ${target}\nAuthenticated with public key "slate@slate-os"\nWelcome to ${target.split('@')[1]||'remote-host'}!\n$ ` +
+                    mark('dim', 'Connection closed.\n')); }
+
+            _scp(args) { if (args.length < 2) return this._err('scp', 'missing file or host');
+                const src = args[0],
+                    dst = args[1]; return this._ok(
+                    `scp: transferring ${src} -> ${dst}\n${src}                              100%  2.4KB  24.0KB/s   00:00\n`); }
+
+            _wget(args) { const url = args[0] || 'http://example.com'; return this._ok(
+                    `--2025-01-15 10:00:00--  ${url}\nResolving ${url.replace(/^https?:\/\//,'').split('/')[0]}... 93.184.216.34\nConnecting to ${url.replace(/^https?:\/\//,'').split('/')[0]}:80... connected.\nHTTP request sent, awaiting response... 200 OK\nLength: 1256 (1.2K) [text/html]\nSaving to: 'index.html'\n\n100%[==========================================>] 1,256       --.-K/s   in 0s\n\n2025-01-15 10:00:00 (12.3 MB/s) - 'index.html' saved [1256]\n`
+                    ); }
+
+            _curl(args) {
+                const url = args.find(a => a.startsWith('http')) || 'https://api.example.com';
+                return this._ok(
+                    `  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n100   256  100   256    0     0   1024      0 --:--:-- --:--:-- --:--:--  1024\n\n{"status":"ok","data":"sample response from ${url}"}\n`
+                    ); }
+
+            _netstat() { return this._ok(
+                    `Active Internet connections (servers and established)\nProto Recv-Q Send-Q Local Address           Foreign Address         State      \ntcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     \ntcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN     \ntcp        0      0 192.168.1.100:22        192.168.1.50:54321      ESTABLISHED\ntcp6       0      0 :::80                   :::*                    LISTEN     \nudp        0      0 0.0.0.0:68              0.0.0.0:*                           \n`
+                    ); }
+
+            _ifconfig() { return this._ok(
+                    `eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.100  netmask 255.255.255.0  broadcast 192.168.1.255\n        inet6 fe80::1234:5678:90ab:cdef  prefixlen 64  scopeid 0x20\n        ether 00:11:22:33:44:55  txqueuelen 1000  (Ethernet)\n        RX packets 12345  bytes 12345678 (11.7 MiB)\n        TX packets 6789  bytes 9876543 (9.4 MiB)\n\nlo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536\n        inet 127.0.0.1  netmask 255.0.0.0\n        loop  txqueuelen 1000  (Local Loopback)\n`
+                    ); }
+
+            _nmap(args) { const target = args[0] || 'localhost'; return this._ok(
+                    `Starting Nmap 7.94 ( https://nmap.org ) at ${new Date().toLocaleTimeString()}\nNmap scan report for ${target} (127.0.0.1)\nHost is up (0.0012s latency).\nNot shown: 997 closed ports\nPORT     STATE    SERVICE\n22/tcp   open     ssh\n80/tcp   open     http\n443/tcp  open     https\n\nNmap done: 1 IP address (1 host up) scanned in 0.12 seconds\n`
+                    ); }
+
+            _traceroute(args) { const target = args[0] || 'google.com'; return this._ok(
+                    `traceroute to ${target} (172.217.3.46), 30 hops max, 60 byte packets\n 1  192.168.1.1  0.342 ms  0.288 ms  0.256 ms\n 2  10.0.0.1  1.234 ms  1.189 ms  1.145 ms\n 3  72.14.194.1  2.345 ms  2.301 ms  2.278 ms\n 4  172.217.3.46  3.456 ms  3.412 ms  3.389 ms\n`
+                    ); }
+
+            _dig(args) { const domain = args[0] || 'example.com'; return this._ok(
+                    `; <<>> DiG 9.18.24 <<>> ${domain}\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 12345\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; QUESTION SECTION:\n;${domain}.			IN	A\n\n;; ANSWER SECTION:\n${domain}.		86400	IN	A	93.184.216.34\n\n;; Query time: 12 msec\n;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)\n;; WHEN: ${new Date().toLocaleString()}\n;; MSG SIZE  rcvd: 56\n`
+                    ); }
+
+            _nslookup(args) { const domain = args[0] || 'example.com'; return this._ok(
+                    `Server:		8.8.8.8\nAddress:	8.8.8.8#53\n\nNon-authoritative answer:\nName:	${domain}\nAddress: 93.184.216.34\n`
+                    ); }
+
+            _whois(args) { const domain = args[0] || 'example.com'; return this._ok(
+                    `% IANA WHOIS server\n% for more information on IANA, visit http://www.iana.org\n% This query returned 1 object\n\ndomain:       ${domain}\norganisation: Internet Assigned Numbers Authority\ncreated:      1995-01-01\nsource:       IANA\n`
+                    ); }
+
+            // ---------- security/pentest ----------
+            _msfconsole() { return this._ok(
+                    `msf6 > use exploit/multi/handler\nmsf6 exploit(multi/handler) > set PAYLOAD windows/meterpreter/reverse_tcp\nPAYLOAD => windows/meterpreter/reverse_tcp\nmsf6 exploit(multi/handler) > set LHOST 192.168.1.100\nLHOST => 192.168.1.100\nmsf6 exploit(multi/handler) > exploit\n\n[*] Started reverse TCP handler on 192.168.1.100:4444\n[*] Sending stage (175174 bytes) to 192.168.1.50\n[*] Meterpreter session 1 opened (192.168.1.100:4444 -> 192.168.1.50:54321) at ${new Date().toLocaleTimeString()}\n\nmeterpreter > help\n...\n`
+                    ); }
+
+            _aircrack() { return this._ok(
+                    `Aircrack-ng 1.7\n\n[00:00:00] Captured 125 data packets (125 encrypted)\n   #  BSSID              ESSID                     Encryption\n   1  00:11:22:33:44:55  MyWifi                    WPA2 (PSK)\n\n   Choosing best network...\n\n   Trying all 256 possible keys...\n   Key found! -> 12345678\n`
+                    ); }
+
+            _sqlmap(args) { const url = args[0] || 'http://target.com'; return this._ok(
+                    `sqlmap -u "${url}" --batch\n\n[INFO] testing connection to the target URL\n[INFO] checking if the target is protected by some kind of WAF\n[INFO] testing if the target URL is stable\n[INFO] testing for SQL injection on GET parameter 'id'\n[INFO] target appears to be vulnerable to 'MySQL >= 5.0.12 AND time-based blind'\n[INFO] fetching database names\n[INFO] retrieved: information_schema\n[INFO] retrieved: test_db\n[INFO] retrieved: users_db\n`
+                    ); }
+
+            _hydra(args) { const target = args[0] || 'ssh://192.168.1.100'; return this._ok(
+                    `Hydra v9.5 (c) 2023 by van Hauser/THC - Please do not use in military or secret service organizations.\n\nHydra (https://github.com/vanhauser-thc/thc-hydra) starting at ${new Date().toLocaleTimeString()}\n[DATA] max 16 tasks per 1 server, overall 16 tasks, 8 login tries (l:4/p:2), ~1 try per task\n[DATA] attacking ssh://192.168.1.100:22/\n[22][ssh] host: 192.168.1.100   login: root   password: admin\n[22][ssh] host: 192.168.1.100   login: user   password: 123456\n1 of 1 target successfully completed, 2 valid passwords found\nHydra (https://github.com/vanhauser-thc/thc-hydra) finished at ${new Date().toLocaleTimeString()}\n`
+                    ); }
+
+            _john(args) { return this._ok(
+                    `John the Ripper 1.9.0-jumbo-1 (2023-01-01)\nLoaded 1 password hash (crypt, generic crypt(3) [?/64])\nPress 'q' or Ctrl-C to abort, almost any other key for status\n0g 0:00:00:01 0.00% (ETA: 2025-01-15 10:00)\n0g 0:00:00:02 0.00% (ETA: 2025-01-15 10:00)\nPassword123        (root)\n1g 0:00:00:02 DONE  (2025-01-15 10:00) 0.50g/s 1024p/s 1024c/s 1024C/s\nUse the "--show" option to display all of the cracked passwords reliably\nSession completed.\n`
+                    ); }
+
+            _hashcat(args) { return this._ok(
+                    `hashcat (v6.2.6) starting in benchmark mode...\n\nOpenCL API (OpenCL 3.0 ) - Platform #1 [Intel(R) OpenCL]\n================================================================\n* Device #1: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz, 16384/32768 MB memory, 12 cores\n\nBenchmark relevant options:\n===========================\n* --optimized-kernel-enable\n\nHashmode: 0 - MD5\nSpeed.#1.........:     123.4 MH/s (8.5ms)\nHashmode: 100 - SHA1\nSpeed.#1.........:     98.7 MH/s (10.2ms)\n...\n`
+                    ); }
+
+            _metasploit() { return this._msfconsole(); }
+
+            // ---------- process/job control ----------
+            _kill(args) { if (!args.length) return this._err('kill', 'missing PID');
+                const pid = parseInt(args[0]);
+                if (isNaN(pid)) return this._err('kill', `invalid PID: ${args[0]}`);
+                const sig = args.includes('-9') ? 'SIGKILL' : 'SIGTERM';
+                // Remove from jobs
+                this.jobs = this.jobs.filter(j => j.pid !== pid);
+                return this._ok(`kill: sending ${sig} to PID ${pid}\nProcess ${pid} terminated\n`); }
+
+            _crontab(args) {
+                if (args.includes('-l')) {
+                    return this._ok(
+                        `# crontab for ${this.fs.username}\n0 6 * * * /usr/bin/backup.sh\n0 0 * * 0 /usr/bin/update.sh\n*/5 * * * * /usr/bin/check-status.sh\n`
+                        );
+                }
+                if (args.includes('-e')) {
+                    return this._ok('crontab: editing crontab (simulated)\n');
+                }
+                return this._ok('usage: crontab [-l] [-e] [-r]\n'); }
+
+            _jobs() {
+                if (!this.jobs.length) return this._ok('No background jobs.\n');
+                let out = '';
+                for (const job of this.jobs) {
+                    const status = job.running ? 'Running' : 'Stopped';
+                    out += `[${job.id}]  ${job.pid}  ${status}  ${job.cmd}\n`;
+                }
+                return this._ok(out);
+            }
+
+            _fg(args) {
+                let jobId = 1;
+                if (args.length && args[0].startsWith('%')) {
+                    jobId = parseInt(args[0].slice(1));
+                }
+                const job = this.jobs.find(j => j.id === jobId);
+                if (!job) return this._err('fg', `job ${jobId} not found`);
+                // Remove from background jobs (simulate foreground)
+                this.jobs = this.jobs.filter(j => j.id !== jobId);
+                return this._ok(`fg: ${job.cmd}\n[${job.id}] Done.\n`);
+            }
+
+            _bg(args) {
+                let jobId = 1;
+                if (args.length && args[0].startsWith('%')) {
+                    jobId = parseInt(args[0].slice(1));
+                }
+                const job = this.jobs.find(j => j.id === jobId);
+                if (!job) return this._err('bg', `job ${jobId} not found`);
+                job.running = true;
+                return this._ok(`bg: ${job.cmd} & [${job.id}] continued.\n`);
+            }
+
+            _sleep(args) {
+                if (!args.length) return this._err('sleep', 'missing operand');
+                const secs = parseFloat(args[0]);
+                if (isNaN(secs)) return this._err('sleep', 'invalid time interval');
+                // Simulate sleep (no actual blocking in browser)
+                return this._ok('');
+            }
+
+            _source(args) {
+                if (!args.length) return this._err('source', 'missing filename');
+                const path = this.fs.resolve(args[0]);
+                if (!this.fs.exists(path)) return this._err('source', `cannot read '${args[0]}': No such file`);
+                if (this.fs.isDir(path)) return this._err('source', `cannot source directory '${args[0]}'`);
+                const content = this.fs.readFile(path) || '';
+                const lines = content.split('\n');
+                let output = '';
+                let error = '';
+                let exitCode = 0;
+                this.inScript = true;
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed || trimmed.startsWith('#')) continue;
+                    const result = this.runCommandLine(trimmed);
+                    output += result.output;
+                    error += result.error;
+                    exitCode = result.exitCode;
+                    if (exitCode !== 0) break;
+                }
+                this.inScript = false;
+                return { output, error, exitCode };
+            }
+
+            // ---------- shell meta ----------
+            _man(args) {
+                const pages = {
+                    ls: 'ls [-l -a -h] [path]  — list directory contents',
+                    cd: 'cd [path]  — change the working directory',
+                    cat: 'cat [file...]  — print file contents, or stdin if none given',
+                    grep: 'grep [-i -v -n -c] pattern [file...]  — search text using a pattern',
+                    find: 'find [path] [-name pattern] [-type f|d] [-exec cmd]  — search the filesystem',
+                    mkdir: 'mkdir [-p] dir...  — create directories',
+                    rm: 'rm [-r -f] path...  — remove files or directories',
+                    cp: 'cp [-r] src dst  — copy files or directories',
+                    mv: 'mv src dst  — move or rename files',
+                    sed: 'sed s/pattern/replacement/[g]  — stream editor',
+                    awk: 'awk {print $N}  — print fields from each line',
+                    tar: 'tar -c|-x|-t -f archive.tar [files...]  — archive utility',
+                    gzip: 'gzip [file...]  — compress files',
+                    gunzip: 'gunzip [file.gz...]  — decompress files',
+                    ping: 'ping [host]  — send ICMP echo requests',
+                    ssh: 'ssh [user@]host  — secure shell client',
+                    scp: 'scp source destination  — secure copy',
+                    wget: 'wget [url]  — download files from the web',
+                    curl: 'curl [options] [url]  — transfer data from URLs',
+                    top: 'top  — display process activity in real-time',
+                    kill: 'kill [-9] PID  — terminate a process',
+                    crontab: 'crontab [-l] [-e] [-r]  — schedule periodic tasks',
+                    netstat: 'netstat  — display network connections',
+                    ifconfig: 'ifconfig  — configure network interfaces',
+                    mount: 'mount  — mount filesystems',
+                    umount: 'umount  — unmount filesystems',
+                    ln: 'ln [-s] source target  — create hard or symbolic links',
+                    nmap: 'nmap [target]  — network exploration tool',
+                    traceroute: 'traceroute [host]  — print the route packets take',
+                    dig: 'dig [domain]  — DNS lookup utility',
+                    nslookup: 'nslookup [domain]  — query DNS servers',
+                    whois: 'whois [domain]  — query WHOIS databases',
+                    msfconsole: 'msfconsole  — Metasploit Framework console',
+                    aircrack: 'aircrack-ng [options]  — WEP/WPA cracking tool',
+                    sqlmap: 'sqlmap [url]  — automatic SQL injection tool',
+                    hydra: 'hydra [service://target]  — login cracker',
+                    john: 'john [options]  — password cracker',
+                    hashcat: 'hashcat [options]  — advanced password recovery',
+                    metasploit: 'metasploit  — Metasploit Framework',
+                    jobs: 'jobs  — list background jobs',
+                    fg: 'fg [%jobid]  — bring job to foreground',
+                    bg: 'bg [%jobid]  — resume job in background',
+                    source: 'source file  — execute commands from a file',
+                    unset: 'unset NAME  — remove a variable',
+                    printf: 'printf format [args...]  — format and print data',
+                    dmesg: 'dmesg  — display kernel ring buffer',
+                    lsblk: 'lsblk  — list block devices',
+                    lspci: 'lspci  — list PCI devices',
+                    lsusb: 'lsusb  — list USB devices',
+                    reset: 'reset  — clear terminal',
+                    help: 'help  — show all available commands',
+                    neofetch: 'neofetch  — display system information with style',
+                };
+                const name = args[0];
+                if (!name) return this._ok('What manual page do you want?\nTry: man ls\n');
+                if (pages[name]) return this._ok(`${name.toUpperCase()}\n    ${pages[name]}\n`);
+                return this._err('man', `no manual entry for ${name}`);
+            }
+
+            _history() { let out = ''; const start = Math.max(0, this.history.length - 40);
+                for (let i = start; i < this.history.length; i++) out += `  ${i+1}  ${this.history[i]}\n`;
+                return this._ok(out); }
+
+            _alias(args) { if (!args.length) { let out = ''; for (const k in this.aliases) out +=
+                    `alias ${k}='${this.aliases[k]}'\n`; return this._ok(out); }
+                const joined = args.join(' ');
+                const m = joined.match(/^([A-Za-z0-9_]+)=(.*)$/);
+                if (m) { this.aliases[m[1]] = m[2].replace(/^['"]|['"]$/g, ''); return this._ok(''); }
+                return this._err('alias', 'invalid syntax, use name=value'); }
+
+            _unalias(args) { if (args[0]) delete this.aliases[args[0]]; return this._ok(''); }
+
+            _export(args) { const joined = args.join(' ');
+                const m = joined.match(/^([A-Za-z0-9_]+)=(.*)$/);
+                if (m) { this.env[m[1]] = m[2].replace(/^['"]|['"]$/g, ''); return this._ok(''); }
+                return this._err('export', 'invalid syntax, use NAME=value'); }
+
+            _unset(args) { if (!args.length) return this._err('unset', 'missing operand');
+                for (const name of args) { delete this.env[name]; }
+                return this._ok(''); }
+
+            _env() { let out = ''; for (const k in this.env) out += `${k}=${this.env[k]}\n`; return this._ok(out); }
+
+            _printenv(args) { if (!args.length) return this._env(); return this._ok((this.env[args[0]] || '') + '\n'); }
+
+            _which(args) { const name = args[0]; if (!name) return this._ok('');
+                if (this.aliases[name]) return this._ok(`${name}: aliased to ${this.aliases[name]}\n`);
+                if (this.commands[name.toLowerCase()]) return this._ok(`/usr/bin/${name}\n`);
+                return this._err('which', `no ${name} in ${this.env.PATH}`); }
+
+            _type(args) { const name = args[0]; if (!name) return this._ok('');
+                if (this.aliases[name]) return this._ok(`${name} is aliased to \`${this.aliases[name]}'\n`);
+                if (this.commands[name.toLowerCase()]) return this._ok(`${name} is a shell builtin\n`);
+                return this._err('type', `${name}: not found`); }
+
+            _file(args) { const p = this.fs.resolve(args[0] || ''); if (!this.fs.exists(p)) return this._err('file',
+                    `${args[0]}: No such file or directory`);
+                return this._ok(`${args[0]}: ${this.fs.isDir(p)?'directory':'ASCII text'}\n`); }
+
+            _stat(args) { const p = this.fs.resolve(args[0] || '');
+                const node = this.fs._walk(p); if (!node) return this._err('stat',
+                    `cannot stat '${args[0]}': No such file or directory`);
+                const size = node.type === 'file' ? node.content.length : this.fs._dirSize(node);
+                return this._ok(
+                    `  File: ${args[0]}\n  Size: ${size}\t${node.type==='dir'?'directory':'regular file'}\nModify: ${new Date(node.mtime).toString()}\n  Mode: ${node.mode}\n`
+                    ); }
+
+            _sudo(args) { if (!args.length) return this._err('sudo', 'missing command');
+                return this.execute(args[0], args.slice(1), ''); }
+
+            _su(args) { const user = args[0] || 'root'; if (user === 'root' || user === 'slate') { this.fs.username = user;
+                    this.env.USER = user; return this._ok(''); }
+                return this._err('su', `user ${user} does not exist`); }
+
+            _tree(args) { const start = this.fs.resolve(args[0] || '.');
+                if (!this.fs.exists(start)) return this._err('tree', `${args[0]}: No such file or directory`);
+                let out = (args[0] || '.') + '\n';
+                const walk = (path, prefix) => { const items = (this.fs.listDir(path) || []).filter(e => !e.name.startsWith(
+                        '.')).sort((a, b) => a.name.localeCompare(b.name));
+                    items.forEach((it, i) => { const last = i === items.length - 1;
+                        out += prefix + (last ? '└── ' : '├── ') + mark(it.isFile ? 'f' : 'd', it.name) + '\n'; if (!it
+                            .isFile) walk(path + '/' + it.name, prefix + (last ? '    ' : '│   ')); }); };
+                walk(start, '');
+                return this._ok(out); }
+
+            _neofetch() {
+                const uptimeS = Math.floor((Date.now() - this.fs.bootTime) / 1000);
+                const art = [
+                    ' ▄▄▄▄▄▄',
+                    '██▀  ▀██',
+                    '██    ██',
+                    '▀██▄▄██▀',
+                    ' ▀▀▀▀▀▀ '
+                ];
+                const info = [
+                    mark('m', `${this.fs.username}@${this.fs.hostname}`),
+                    '-----------------',
+                    `OS: Slate OS`,
+                    `Kernel: 6.12.0-slate`,
+                    `Uptime: ${Math.floor(uptimeS/60)}m`,
+                    `Shell: bash (simulated)`,
+                    `Terminal: slate-term`,
+                    `CPU: Synthetic Core @ 4.2THz`,
+                    `Memory: 2.5GiB / 8.0GiB`,
+                    `Disk: 4.2GiB / 20GiB (21%)`,
+                ];
+                let out = '';
+                for (let i = 0; i < Math.max(art.length, info.length); i++) {
+                    out += (art[i] || '        ') + '   ' + (info[i] || '') + '\n';
+                }
+                return this._ok(out);
+            }
+
+            _help() {
+                const names = Object.keys(this.commands).sort();
+                let out = 'Slate OS shell — available commands:\n\n';
+                const cols = 5,
+                    perCol = Math.ceil(names.length / cols);
+                for (let r = 0; r < perCol; r++) { let row = '';
+                    for (let c = 0; c < cols; c++) { const idx = r + c * perCol; if (idx < names.length) row += (names[
+                            idx] || '').padEnd(13); }
+                    out += row + '\n'; }
+                out += '\nPipes (|), redirection (> >>) and $VARS all work. Try: man <command>\n';
+                out += '\nChaining: ; (always), && (and), || (or)\n';
+                out += '\nBackground: &  —  jobs, fg, bg, kill\n';
+                out += '\nScripting: source <file>, # comments\n';
+                return this._ok(out);
+            }
+
+            _dmesg() {
+                const logs = [
+                    '[    0.000000] Linux version 6.12.0-slate (build@slate)',
+                    '[    0.000001] Command line: BOOT_IMAGE=/vmlinuz-linux root=UUID=1234-5678',
+                    '[    0.000123] CPU: Synthetic Core @ 4.2THz, 4 cores, 8 threads',
+                    '[    0.000234] Memory: 8388608K available',
+                    '[    0.000345] ACPI: Using IOAPIC for interrupt routing',
+                    '[    0.000456] PCI: Using configuration type 1',
+                    '[    0.000567] SCSI subsystem initialized',
+                    '[    0.000678] usbcore: registered new interface driver usbfs',
+                    '[    0.000789] usbcore: registered new interface driver hub',
+                    '[    0.000890] usbcore: registered new device driver usb',
+                    '[    0.001000] sl0: Slate virtual network device initialized',
+                    '[    0.001100] systemd[1]: systemd 255 running in system mode',
+                    '[    0.001200] systemd[1]: Detected virtualization none',
+                    '[    0.001300] systemd[1]: Set hostname to <slate-os>',
+                    '[    0.002000] systemd[1]: Reached target Graphical Interface',
+                ];
+                return this._ok(logs.join('\n') + '\n');
+            }
+
+            _lsblk() {
+                return this._ok(
+                    `NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT\nsda      8:0    0 20.0G  0 disk\n├─sda1   8:1    0 19.0G  0 part /\n└─sda2   8:2    0  1.0G  0 part [SWAP]\nsdb      8:16   0 10.0G  0 disk\n└─sdb1   8:17   0 10.0G  0 part /mnt\nsr0     11:0    1  1.0G  0 rom  /media/cdrom\n`
+                    );
+            }
+
+            _lspci() {
+                return this._ok(
+                    `00:00.0 Host bridge: Intel Corporation Xeon E3-1200 v6 (rev 05)\n00:01.0 PCI bridge: Intel Corporation Xeon E3-1200 v6 (rev 05)\n00:02.0 VGA compatible controller: Intel Corporation HD Graphics 630 (rev 04)\n00:1f.0 ISA bridge: Intel Corporation Z270 Chipset (rev 05)\n01:00.0 Ethernet controller: Realtek Semiconductor RTL8111/8168/8411 (rev 15)\n`
+                    );
+            }
+
+            _lsusb() {
+                return this._ok(
+                    `Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub\nBus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub\nBus 001 Device 002: ID 8087:0a2b Intel Corp. Bluetooth wireless interface\nBus 001 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver\n`
+                    );
+            }
+
+            // ---------- execute with command chaining ----------
+            execute(cmdName, args, stdin) {
+                const lowerCmd = cmdName.toLowerCase();
+                if (this.aliases[lowerCmd] && this.commands[lowerCmd] === undefined) {
+                    const parts = this.aliases[lowerCmd].split(' ');
+                    return this.execute(parts[0], parts.slice(1).concat(args), stdin);
+                }
+                if (this.commands[lowerCmd]) {
+                    try { const r = this.commands[lowerCmd](args, stdin);
+                        this.lastExit = r.exitCode; return r; } catch (e) { this.lastExit = 1; return { output: '',
+                            error: `${cmdName}: ${e.message}\n`, exitCode: 1 }; }
+                }
+                // Check if it's an executable file in the filesystem
+                const path = this.fs.resolve(cmdName);
+                if (this.fs.exists(path) && this.fs.isFile(path) && this.fs.isExecutable(path)) {
+                    // Execute it as a script
+                    const result = this._source([cmdName]);
+                    this.lastExit = result.exitCode;
+                    return result;
+                }
+                this.lastExit = 127;
+                return { output: '', error: `${cmdName}: command not found\n`, exitCode: 127 };
+            }
+
+            // ---------- main command runner with full chaining ----------
+            runCommandLine(line) {
+                // Strip comments
+                let cleanLine = line.replace(/#.*$/, '').trim();
+                if (!cleanLine) return { output: '', error: '', exitCode: 0 };
+
+                // Check for background
+                let background = false;
+                if (cleanLine.endsWith('&')) {
+                    background = true;
+                    cleanLine = cleanLine.slice(0, -1).trim();
+                }
+
+                // Parse chaining: ; , && , ||
+                const tokens = this._tokenize(cleanLine);
+                if (tokens.length === 0) return { output: '', error: '', exitCode: 0 };
+
+                // Find chain operators
+                const commands = [];
+                let current = [];
+                let currentOp = ';';
+
+                for (const t of tokens) {
+                    if (t === ';' || t === '&&' || t === '||') {
+                        if (current.length) {
+                            commands.push({ cmd: current, op: currentOp });
+                            current = [];
+                        }
+                        currentOp = t;
+                    } else {
+                        current.push(t);
+                    }
+                }
+                if (current.length) {
+                    commands.push({ cmd: current, op: currentOp });
+                }
+
+                let finalOutput = '';
+                let finalError = '';
+                let finalExit = 0;
+
+                for (let i = 0; i < commands.length; i++) {
+                    const { cmd, op } = commands[i];
+                    // Execute this command segment
+                    const result = this._executeSegment(cmd);
+                    finalOutput += result.output;
+                    finalError += result.error;
+                    finalExit = result.exitCode;
+
+                    // Check conditional execution
+                    if (op === '&&' && finalExit !== 0) break;
+                    if (op === '||' && finalExit === 0) break;
+                }
+
+                if (background && commands.length === 1) {
+                    // Add to jobs
+                    this.jobCounter++;
+                    const job = {
+                        id: this.jobCounter,
+                        pid: 1000 + this.jobCounter,
+                        cmd: cleanLine,
+                        running: true,
+                    };
+                    this.jobs.push(job);
+                    finalOutput = `[${job.id}] ${job.pid}\n` + finalOutput;
+                }
+
+                return { output: finalOutput, error: finalError, exitCode: finalExit };
+            }
+
+            _executeSegment(tokens) {
+                // Find redirection
+                let outFile = null,
+                    appendMode = false,
+                    inFile = null;
+                const clean = [];
+                for (let i = 0; i < tokens.length; i++) {
+                    if (tokens[i] === '>') { outFile = tokens[++i];
+                        appendMode = false; } else if (tokens[i] === '>>') { outFile = tokens[++i];
+                        appendMode = true; } else if (tokens[i] === '<') { inFile = tokens[++i]; } else clean.push(tokens[
+                        i]);
+                }
+
+                // Parse pipeline
+                const segments = this._parsePipeline(clean);
+
+                let stdin = '';
+                if (inFile) { const p = this.fs.resolve(inFile);
+                    stdin = this.fs.readFile(p) || ''; }
+
+                let finalOut = '',
+                    finalErr = '',
+                    finalExit = 0;
+                for (let i = 0; i < segments.length; i++) {
+                    const seg = segments[i];
+                    if (!seg.length) continue;
+                    const [cmdName, ...args] = seg;
+                    const result = this.execute(cmdName, args, stdin);
+                    stdin = result.output;
+                    finalErr += result.error;
+                    finalExit = result.exitCode;
+                    if (i === segments.length - 1) finalOut = result.output;
+                }
+
+                if (outFile) {
+                    const p = this.fs.resolve(outFile);
+                    if (appendMode) this.fs.appendFile(p, finalOut);
+                    else this.fs.writeFile(p, finalOut);
+                    finalOut = '';
+                }
+
+                return { output: finalOut, error: finalErr, exitCode: finalExit };
+            }
+
+            addHistory(cmd) { if (cmd.trim()) { this.history.push(cmd);
+                    this.historyIndex = this.history.length; } }
+            getHistoryPrev() { if (this.historyIndex > 0) { this.historyIndex--; return this.history[this.historyIndex]; }
+                return null; }
+            getHistoryNext() { if (this.historyIndex < this.history.length - 1) { this.historyIndex++; return this
+                    .history[this.historyIndex]; } this.historyIndex = this.history.length; return null; }
+        }
+
+        const fs = new VirtualFS();
+        const shell = new CommandEngine(fs);
+
+        /* =========================================================
+           BOOT SEQUENCE
+           ========================================================= */
+        const bootLines = [
+            { t: '', c: '' },
+            { t: '  ███████╗██╗      █████╗ ████████╗███████╗', c: 'brass' },
+            { t: '  ██╔════╝██║     ██╔══██╗╚══██╔══╝██╔════╝', c: 'brass' },
+            { t: '  ███████╗██║     ███████║   ██║   █████╗  ', c: 'brass' },
+            { t: '  ╚════██║██║     ██╔══██║   ██║   ██╔══╝  ', c: 'brass' },
+            { t: '  ███████║███████╗██║  ██║   ██║   ███████╗', c: 'brass' },
+            { t: '  ╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝', c: 'brass' },
+            { t: '', c: '' },
+            { t: '  SLATE OS — kernel 6.12.0-slate', c: 'brass' },
+            { t: '  developed by Soumyadeep Basu', c: 'dim' },
+            { t: '', c: '' },
+            { t: 'slate-bios (C)', c: 'dim' },
+            { t: 'CPU  : Synthetic Core @ 4.2THz .......... [ OK ]', c: 'ok' },
+            { t: 'MEM  : 8388608K OK ...................... [ OK ]', c: 'ok' },
+            { t: 'GPU  : Compositor / vsync ............... [ OK ]', c: 'ok' },
+            { t: 'AUD  : WebAudio codec.................... [ OK ]', c: 'ok' },
+            { t: 'NET  : Virtual loopback ................. [ OK ]', c: 'ok' },
+            { t: '', c: '' },
+            { t: '[  0.000000] Linux version 6.12.0-slate (build@slate)', c: 'dim' },
+            { t: '[  0.041] fs: mounting / /home /var /etc ......... done', c: 'dim' },
+            { t: '[  0.512] Starting systemd-slate.service .......... done', c: 'dim' },
+            { t: '[  0.803] Starting NetworkManager .................. done', c: 'dim' },
+            { t: '[  1.001] Reached target Graphical Interface.', c: 'dim' },
+            { t: '[  1.200] Job control enabled, type `help` for commands.', c: 'dim' },
+            { t: '', c: '' },
+            { t: 'Welcome to Slate OS', c: 'brass' },
+            { t: "Type 'help' once the shell loads.", c: 'dim' },
+        ];
+
+        function runBoot() {
+            const boot = document.getElementById('boot-screen');
+            boot.style.display = 'block';
+            boot.innerHTML = '';
+            document.getElementById('desktop').style.display = 'none';
+            document.getElementById('shutdown-screen').style.display = 'none';
+            let i = 0;
+
+            function next() {
+                if (i >= bootLines.length) { setTimeout(() => { boot.style.display = 'none';
+                        showDesktop(); }, 450); return; }
+                const row = document.createElement('div');
+                row.className = 'boot-flicker' + (bootLines[i].c === 'ok' ? ' ok' : bootLines[i].c === 'dim' ? ' dim' :
+                '');
+                row.textContent = bootLines[i].t;
+                boot.appendChild(row);
+                boot.scrollTop = boot.scrollHeight;
+                if (bootLines[i].t.includes('[ OK ]') || bootLines[i].t.includes('done')) AudioEngine.keytick();
+                i++;
+                setTimeout(next, 55 + Math.random() * 70);
+            }
+            next();
+        }
+
+        function showDesktop() {
+            document.getElementById('desktop').style.display = 'block';
+            AudioEngine.startHum();
+            setTimeout(() => openApp('terminal'), 350);
+        }
+
+        /* =========================================================
+           APP REGISTRY
+           ========================================================= */
+        const APPS = [
+            { id: 'terminal', name: 'Terminal', icon: 'terminal', desktop: true, dock: true },
+            { id: 'files', name: 'Files', icon: 'folder', desktop: true, dock: true },
+            { id: 'editor', name: 'Text Editor', icon: 'file', desktop: true, dock: true },
+            { id: 'settings', name: 'Settings', icon: 'gear', desktop: false, dock: true },
+            { id: 'about', name: 'About Slate', icon: 'info', desktop: true, dock: true },
+        ];
+
+        function buildLaunchers() {
+            const grid = document.getElementById('app-grid'),
+                dicons = document.getElementById('desktop-icons'),
+                dock = document.getElementById('dock');
+            grid.innerHTML = '';
+            dicons.innerHTML = '';
+            dock.innerHTML = '';
+            APPS.forEach(app => {
+                const tile = document.createElement('div');
+                tile.className = 'app-tile';
+                tile.innerHTML = `${chip(app.icon)}<span>${app.name}</span>`;
+                tile.addEventListener('click', () => { AudioEngine.click();
+                    openApp(app.id);
+                    closeOverview(); });
+                grid.appendChild(tile);
+
+                if (app.desktop) { const di = document.createElement('div');
+                    di.className = 'dicon';
+                    di.innerHTML = `${chip(app.icon)}<span>${app.name}</span>`;
+                    di.addEventListener('click', () => { AudioEngine.click();
+                        openApp(app.id); });
+                    dicons.appendChild(di); }
+
+                if (app.dock) { const dt = document.createElement('div');
+                    dt.className = 'app-tile';
+                    dt.id = 'dock-' + app.id;
+                    dt.title = app.name;
+                    dt.innerHTML = `${chip(app.icon)}<div class="running-dot"></div>`;
+                    dt.addEventListener('click', () => { AudioEngine.click();
+                        openApp(app.id); });
+                    dock.appendChild(dt); }
+            });
+        }
+
+        /* =========================================================
+           WINDOW MANAGER
+           ========================================================= */
+        let zTop = 20;
+        const winState = {};
+
+        function setDockRunning(id, running) { const d = document.getElementById('dock-' + id); if (d) d.classList.toggle(
+                'running', running); }
+
+        function openApp(id) {
+            if (winState[id] && winState[id].el) {
+                if (winState[id].minimized) {
+                    winState[id].el.style.display = 'flex';
+                    winState[id].minimized = false;
+                }
+                focusWin(winState[id].el);
+                return;
+            }
+            const app = APPS.find(a => a.id === id);
+            const { title, html, w, h, icon } = getAppContent(id);
+            const win = createWindow(id, title || app.name, html, w || 460, h || 340, icon || app.icon);
+            winState[id] = { el: win, minimized: false };
+            setDockRunning(id, true);
+            if (id === 'terminal') initTerminal(win);
+            if (id === 'editor') initEditor(win);
+            if (id === 'files') initFiles(win);
+            if (id === 'settings') initSettings(win);
+        }
+
+        function createWindow(id, title, bodyHTML, w, h, icon) {
+            const container = document.getElementById('windows-container');
+            const win = document.createElement('div');
+            win.className = 'win';
+            win.dataset.id = id;
+            const left = 90 + Math.random() * 160,
+                top = 64 + Math.random() * 90;
+            win.style.left = left + 'px';
+            win.style.top = top + 'px';
+            win.style.width = w + 'px';
+            win.style.height = h + 'px';
+            win.innerHTML = `
+            <div class="win-titlebar">
+              <div class="win-controls">
+                <button data-act="close">×</button>
+                <button data-act="min">–</button>
+                <button data-act="max">▢</button>
+              </div>
+              <div class="win-title">${iconSVG(icon||'file')}${title}</div>
+            </div>
+            <div class="win-body">${bodyHTML}</div>
+            <div class="resize-handle"></div>`;
+            container.appendChild(win);
+            focusWin(win);
+            makeDraggable(win, win.querySelector('.win-titlebar'));
+            makeResizable(win, win.querySelector('.resize-handle'));
+            win.addEventListener('mousedown', () => focusWin(win));
+            win.querySelector('[data-act="close"]').addEventListener('click', e => { e.stopPropagation();
+                AudioEngine.click();
+                win.remove();
+                delete winState[id];
+                setDockRunning(id, false); });
+            win.querySelector('[data-act="min"]').addEventListener('click', e => { e.stopPropagation();
+                AudioEngine.click();
+                win.style.display = 'none';
+                if (winState[id]) winState[id].minimized = true; });
+            win.querySelector('[data-act="max"]').addEventListener('click', e => { e.stopPropagation();
+                AudioEngine.click();
+                if (win.dataset.maxed === '1') { win.style.left = win.dataset.px;
+                    win.style.top = win.dataset.py;
+                    win.style.width = win.dataset.pw;
+                    win.style.height = win.dataset.ph;
+                    win.dataset.maxed = '0'; } else { win.dataset.px = win.style.left;
+                    win.dataset.py = win.style.top;
+                    win.dataset.pw = win.style.width;
+                    win.dataset.ph = win.style.height;
+                    win.style.left = '6px';
+                    win.style.top = '52px';
+                    win.style.width = 'calc(100% - 12px)';
+                    win.style.height = 'calc(100% - 120px)';
+                    win.dataset.maxed = '1'; } });
+            return win;
+        }
+
+        function focusWin(win) { document.querySelectorAll('.win').forEach(w => w.classList.remove('focused'));
+            win.classList.add('focused');
+            zTop++;
+            win.style.zIndex = zTop; }
+
+        function makeDraggable(win, handle) { let sx, sy, ox, oy, dragging = false;
+            handle.addEventListener('mousedown', e => { if (e.target.closest('.win-controls')) return;
+                dragging = true;
+                sx = e.clientX;
+                sy = e.clientY;
+                ox = win.offsetLeft;
+                oy = win.offsetTop;
+                focusWin(win);
+                e.preventDefault(); });
+            window.addEventListener('mousemove', e => { if (!dragging) return;
+                win.style.left = (ox + e.clientX - sx) + 'px';
+                win.style.top = Math.max(44, oy + e.clientY - sy) + 'px'; });
+            window.addEventListener('mouseup', () => dragging = false); }
+
+        function makeResizable(win, handle) { let sx, sy, ow, oh, resizing = false;
+            handle.addEventListener('mousedown', e => { resizing = true;
+                sx = e.clientX;
+                sy = e.clientY;
+                ow = win.offsetWidth;
+                oh = win.offsetHeight;
+                e.preventDefault();
+                e.stopPropagation(); });
+            window.addEventListener('mousemove', e => { if (!resizing) return;
+                win.style.width = Math.max(360, ow + e.clientX - sx) + 'px';
+                win.style.height = Math.max(240, oh + e.clientY - sy) + 'px'; });
+            window.addEventListener('mouseup', () => resizing = false); }
+
+        /* =========================================================
+           ACTIVITIES / POWER
+           ========================================================= */
+        const overview = document.getElementById('activities-overview');
+        document.getElementById('activities-btn').addEventListener('click', () => { AudioEngine.click();
+            overview.style.display = overview.style.display === 'flex' ? 'none' : 'flex'; });
+
+        function closeOverview() { overview.style.display = 'none'; }
+        overview.addEventListener('click', e => { if (e.target === overview) closeOverview(); });
+
+        const powerMenu = document.getElementById('power-menu');
+        document.getElementById('power-btn').addEventListener('click', e => { e.stopPropagation();
+            AudioEngine.click();
+            powerMenu.style.display = powerMenu.style.display === 'block' ? 'none' : 'block'; });
+        document.addEventListener('click', () => { powerMenu.style.display = 'none'; });
+        powerMenu.addEventListener('click', e => { const act = e.target.closest('button')?.dataset.action; if (!act) return;
+            doShutdown(act === 'restart'); });
+
+        function doShutdown(restart) {
+            AudioEngine.powerDown();
+            AudioEngine.stopHum();
+            const desktop = document.getElementById('desktop');
+            desktop.classList.add('collapse-anim');
+            setTimeout(() => {
+                desktop.style.display = 'none';
+                desktop.classList.remove('collapse-anim');
+                document.querySelectorAll('.win').forEach(w => w.remove());
+                Object.keys(winState).forEach(k => delete winState[k]);
+                const sd = document.getElementById('shutdown-screen');
+                if (restart) { setTimeout(() => runBoot(), 700); } else { sd.style.display = 'flex';
+                    const wake = () => { sd.style.display = 'none';
+                        document.removeEventListener('keydown', wake);
+                        document.removeEventListener('click', wake);
+                        runBoot(); };
+                    document.addEventListener('keydown', wake);
+                    document.addEventListener('click', wake); }
+            }, 500);
+        }
+
+        const ctxMenu = document.getElementById('ctx-menu');
+        document.getElementById('desktop').addEventListener('contextmenu', e => {
+            e.preventDefault();
+            ctxMenu.style.left = e.clientX + 'px';
+            ctxMenu.style.top = e.clientY + 'px';
+            ctxMenu.innerHTML = `
+            <button data-a="terminal">${iconSVG('terminal')} Open Terminal</button>
+            <button data-a="files">${iconSVG('folder')} Open Files</button>
+            <button data-a="settings">${iconSVG('gear')} Settings</button>
+            <button data-a="about">${iconSVG('info')} About Slate</button>`;
+            ctxMenu.style.display = 'block';
+        });
+        document.addEventListener('click', () => { ctxMenu.style.display = 'none'; });
+        ctxMenu.addEventListener('click', e => { const a = e.target.closest('button')?.dataset.a; if (a) { AudioEngine
+                    .click();
+                openApp(a); } });
+
+        /* =========================================================
+           TERMINAL APP
+           ========================================================= */
+        function renderMarked(container, text) {
+            const re = new RegExp(M1 + '(.)' + M2 + '([^' + M3 + ']*)' + M3, 'g');
+            let last = 0,
+                m;
+            const frag = document.createDocumentFragment();
+            while ((m = re.exec(text))) {
+                if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+                const span = document.createElement('span');
+                span.className = m[1] === 'd' ? 'name-dir' : m[1] === 'm' ? 'grep-hit' : m[1] === 'c' ? 'out-ok' : (m[2]
+                    .startsWith('.') ? 'name-hidden' : 'name-file');
+                span.textContent = m[2];
+                frag.appendChild(span);
+                last = re.lastIndex;
+            }
+            if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+            container.appendChild(frag);
+        }
+
+        function initTerminal(win) {
+            const out = document.createElement('div');
+            out.className = 'mono-out';
+            win.querySelector('.win-body').appendChild(out);
+
+            function printLine(text, cls) {
+                const line = document.createElement('div');
+                line.className = 'term-line' + (cls ? ' ' + cls : '');
+                renderMarked(line, text);
+                out.appendChild(line);
+                out.scrollTop = out.scrollHeight;
+            }
+
+            function promptFragment() {
+                const home = '/home/' + fs.username;
+                let short = fs.cwd;
+                if (fs.cwd === home) short = '~';
+                else if (fs.cwd.startsWith(home)) short = '~' + fs.cwd.slice(home.length);
+                return { user: fs.username, host: fs.hostname, path: short };
+            }
+
+            function showPrompt() {
+                const row = document.createElement('div');
+                row.className = 'term-input-row';
+                const p = document.createElement('span');
+                p.className = 'prompt';
+                const pr = promptFragment();
+                p.innerHTML =
+                    `<span class="p-user">${pr.user}</span><span class="p-at">@</span><span class="p-host">${pr.host}</span><span class="p-colon">:</span><span class="p-path">${pr.path}</span><span class="p-dollar">$</span>`;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.autocomplete = 'off';
+                input.spellcheck = false;
+                input.className = 'term-input';
+                row.appendChild(p);
+                row.appendChild(input);
+                out.appendChild(row);
+                out.scrollTop = out.scrollHeight;
+                input.focus();
+
+                input.addEventListener('keydown', e => {
+                    AudioEngine.keytick();
+                    if (e.key === 'Enter') {
+                        const cmdLine = input.value;
+                        input.disabled = true;
+                        const pr2 = promptFragment();
+                        printLine(`${pr2.user}@${pr2.host}:${pr2.path}$ ${cmdLine}`);
+                        if (cmdLine.trim()) {
+                            shell.addHistory(cmdLine);
+                            const result = shell.runCommandLine(cmdLine);
+                            if (result.output === '\x1bCLEAR\x1b') { out.innerHTML = ''; } else {
+                                if (result.output) { result.output.split('\n').forEach(l => { if (l) printLine(
+                                        l); }); }
+                                if (result.error) { result.error.split('\n').forEach(l => { if (l) printLine(l,
+                                        'out-err'); }); }
+                            }
+                        }
+                        showPrompt();
+                    } else if (e.key === 'ArrowUp') { const prev = shell.getHistoryPrev(); if (prev !== null) { input
+                            .value = prev; }
+                        e.preventDefault(); } else if (e.key === 'ArrowDown') { const next = shell.getHistoryNext();
+                        input.value = next !== null ? next : '';
+                        e.preventDefault(); } else if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const val = input.value;
+                        const parts = val.split(/\s+/);
+                        const lastPart = parts[parts.length - 1] || '';
+                        if (parts.length === 1) {
+                            const matches = Object.keys(shell.commands).filter(c => c.startsWith(lastPart));
+                            if (matches.length === 1) input.value = matches[0] + ' ';
+                        } else {
+                            const dir = parts.slice(0, -1).join(' ');
+                            const items = fs.listDir(fs.resolve(dir)) || fs.listDir(fs.cwd);
+                            if (items) { const matches = items.filter(i => i.name.startsWith(lastPart)); if (
+                                    matches.length === 1) { parts[parts.length - 1] = matches[0].name + (
+                                        matches[0].isFile ? ' ' : '/');
+                                    input.value = parts.join(' '); } }
+                        }
+                    }
+                });
+            }
+
+            printLine('Slate OS — type "help" for a full command list.');
+            printLine('');
+            printLine('  · Command chaining: ; (always), && (and), || (or)');
+            printLine('  · Background: &  —  jobs, fg, bg, kill');
+            printLine('  · Scripting: source <file>, # comments');
+            printLine('');
+            showPrompt();
+        }
+
+        /* =========================================================
+           FILES APP (better spacing)
+           ========================================================= */
+        function initFiles(win) {
+            const grid = win.querySelector('#files-grid'),
+                pathEl = win.querySelector('#files-path'),
+                backBtn = win.querySelector('#files-back');
+            let stack = [fs.cwd];
+
+            function render() {
+                grid.innerHTML = '';
+                const cur = stack[stack.length - 1];
+                pathEl.textContent = cur;
+                backBtn.style.visibility = stack.length > 1 ? 'visible' : 'hidden';
+                const items = (fs.listDir(cur) || []).filter(i => !i.name.startsWith('.'));
+                items.sort((a, b) => { if (a.isFile && !b.isFile) return 1; if (!a.isFile && b.isFile) return -1; return a
+                        .name.localeCompare(b.name); });
+                if (!items.length) { const e = document.createElement('div');
+                    e.className = 'f-empty';
+                    e.textContent = 'Empty directory';
+                    grid.appendChild(e); return; }
+                for (const item of items) {
+                    const div = document.createElement('div');
+                    div.className = 'f-item';
+                    div.innerHTML = `${chip(item.isFile?'file':'folder')}<div class="f-name">${item.name}</div>`;
+                    div.addEventListener('dblclick', () => {
+                        AudioEngine.click();
+                        if (!item.isFile) { stack.push(cur === '/' ? '/' + item.name : cur + '/' + item.name);
+                            render(); } else {
+                            const path = cur + '/' + item.name;
+                            openApp('editor');
+                            setTimeout(() => { loadIntoEditor(path); }, 80);
+                        }
+                    });
+                    grid.appendChild(div);
+                }
+            }
+            backBtn.addEventListener('click', () => { if (stack.length > 1) { stack.pop();
+                    render();
+                    AudioEngine.click(); } });
+            render();
+        }
+
+        /* =========================================================
+           EDITOR APP
+           ========================================================= */
+        let editorCurrentPath = null;
+
+        function loadIntoEditor(path) {
+            const ta = document.getElementById('editor-area');
+            const pathInput = document.getElementById('editor-path');
+            const status = document.getElementById('editor-status');
+            if (!ta) return;
+            editorCurrentPath = path;
+            ta.value = fs.readFile(path) || '';
+            if (pathInput) pathInput.value = path;
+            if (status) status.textContent = 'Loaded';
+        }
+
+        function saveEditor() {
+            const ta = document.getElementById('editor-area');
+            const pathInput = document.getElementById('editor-path');
+            const status = document.getElementById('editor-status');
+            if (!ta) return;
+            const path = fs.resolve(pathInput.value || editorCurrentPath || '~/untitled.txt');
+            fs.writeFile(path, ta.value);
+            editorCurrentPath = path;
+            AudioEngine.chime();
+            if (status) status.textContent = 'Saved · ' + new Date().toLocaleTimeString();
+        }
+
+        function initEditor(win) {
+            const ta = win.querySelector('#editor-area');
+            ta.addEventListener('keydown', e => {
+                AudioEngine.keytick();
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault();
+                    saveEditor(); }
+            });
+            win.querySelector('#editor-save').addEventListener('click', saveEditor);
+            if (editorCurrentPath) loadIntoEditor(editorCurrentPath);
+        }
+
+        /* =========================================================
+           SETTINGS APP
+           ========================================================= */
+        function initSettings(win) {
+            const body = win.querySelector('#settings-body');
+            body.innerHTML = `
+            <div class="settings-section"><h4>Sound</h4>
+              <div class="settings-row"><label>Master volume<span class="hint">Interface clicks and boot chimes</span></label>
+                <input type="range" id="set-vol" min="0" max="100" value="55"></div>
+              <div class="settings-row"><label>Idle hum<span class="hint">Ambient low-frequency tone</span></label>
+                <input type="checkbox" id="set-hum" checked></div>
+            </div>
+            <div class="settings-section"><h4>System</h4>
+              <div class="settings-row"><label>Hostname</label>
+                <input type="text" id="set-host" value="${fs.hostname}" style="background:var(--panel-3);color:var(--ink);border:1px solid var(--line-strong);border-radius:7px;padding:6px 10px;font-family:var(--font-disp);width:140px;"></div>
+              <div class="settings-row"><label>Username</label>
+                <span style="font-family:var(--font-disp);color:var(--brass-bright);">${fs.username}</span></div>
+            </div>`;
+            body.querySelector('#set-vol').addEventListener('input', e => AudioEngine.setVolume(e.target.value / 100));
+            body.querySelector('#set-hum').addEventListener('change', e => { if (e.target.checked) AudioEngine
+                    .startHum();
+                else AudioEngine.stopHum(); });
+            body.querySelector('#set-host').addEventListener('change', e => { fs.hostname = e.target.value || fs
+                    .hostname; });
+        }
+
+        /* =========================================================
+           APP CONTENT
+           ========================================================= */
+        function getAppContent(id) {
+            if (id === 'terminal') return { title: 'Terminal', icon: 'terminal', w: 620, h: 440, html: '' };
+            if (id === 'files') return { title: 'Files', icon: 'folder', w: 560, h: 420, html: `
+            <div class="files-toolbar"><button id="files-back">← Back</button><span class="fpath" id="files-path">/home/slate</span></div>
+            <div class="files-grid" id="files-grid"></div>` };
+            if (id === 'editor') return { title: 'Text Editor', icon: 'file', w: 580, h: 440, html: `
+            <div class="editor-toolbar">
+              <input type="text" id="editor-path" placeholder="/home/slate/untitled.txt">
+              <button id="editor-save">Save</button>
+              <span class="editor-status" id="editor-status">Unsaved</span>
+            </div>
+            <textarea class="editor" id="editor-area" placeholder="Start typing…"></textarea>` };
+            if (id === 'settings') return { title: 'Settings', icon: 'gear', w: 460, h: 440, html: `<div class="pad" id="settings-body"></div>` };
+            if (id === 'about') return { title: 'About Slate', icon: 'info', w: 440, h: 460, html: `
+            <div class="about-slate">
+              <div class="big-mark">S</div>
+              <div class="os-name">Slate OS</div>
+              <div class="about-divider"></div>
+              <div class="meta">
+                Kernel&nbsp;&nbsp;6.12.0-slate<br>
+                Shell&nbsp;&nbsp;&nbsp;&nbsp;bash (simulated)<br>
+                Runtime&nbsp;HTML5 / CSS3 / ES6<br>
+                <span style="display:inline-block; margin-top:8px;">
+                  <a href="https://github.com/Soumyadxxp" target="_blank">github.com/Soumyadxxp</a>
+                </span>
+              </div>
+              <div class="credit">Developed by Soumyadeep Basu</div>
+            </div>` };
+            return { title: 'App', icon: 'file', w: 420, h: 300, html: '<div class="pad">Unknown app.</div>' };
+        }
+
+        /* =========================================================
+           INIT
+           ========================================================= */
+        buildLaunchers();
+        runBoot();
+        document.body.addEventListener('click', () => AudioEngine.ensure(), { once: true });
+
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.win').forEach(win => {
+                const rect = win.getBoundingClientRect();
+                const maxX = window.innerWidth - 50,
+                    maxY = window.innerHeight - 50;
+                if (rect.left > maxX) win.style.left = Math.max(10, maxX - rect.width) + 'px';
+                if (rect.top > maxY) win.style.top = Math.max(44, maxY - rect.height) + 'px';
+            });
+        });
+
+        console.log('%cSlate OS', 'color:#cf9a5c;font-weight:bold;');
+        console.log('Developed by Soumyadeep Basu — type "help" in the terminal.');
+    </script>
+</body>
+</html>
